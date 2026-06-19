@@ -1,6 +1,14 @@
 const express = require('express');
 const router = express.Router();
+const fs = require('fs');
+const path = require('path');
 const { loadDB, saveDB, getNextId } = require('../utils/db');
+
+// Папка для загрузки видео
+const UPLOAD_DIR = path.join(__dirname, '../public/uploads');
+if (!fs.existsSync(UPLOAD_DIR)) {
+    fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+}
 
 // Проверка админа
 function checkAdmin(req, res, next) {
@@ -110,7 +118,65 @@ router.delete('/task/:taskId', checkAdmin, (req, res) => {
     }
 });
 
-// Обновить медиа
+// ============================================================
+// 🆕 НОВЫЙ ЭНДПОЙНТ ДЛЯ ЗАГРУЗКИ ВИДЕО
+// ============================================================
+router.post('/upload-video', checkAdmin, (req, res) => {
+    try {
+        const { videoType, videoData } = req.body;
+
+        if (!videoType || !videoData) {
+            return res.status(400).json({
+                status: 'error',
+                message: 'Не указан тип видео или данные'
+            });
+        }
+
+        // Убираем префикс base64
+        const base64Data = videoData.replace(/^data:video\/\w+;base64,/, '');
+        const buffer = Buffer.from(base64Data, 'base64');
+
+        // Определяем расширение
+        let ext = '.mp4';
+        if (videoData.includes('video/webm')) ext = '.webm';
+        if (videoData.includes('video/ogg')) ext = '.ogg';
+
+        // Имя файла
+        const filename = `${videoType}_${Date.now()}${ext}`;
+        const filepath = path.join(UPLOAD_DIR, filename);
+
+        // Сохраняем файл
+        fs.writeFileSync(filepath, buffer);
+        console.log('💾 Видео сохранено:', filename);
+
+        // Сохраняем путь в БД
+        const db = loadDB();
+        const videoUrl = `/uploads/${filename}`;
+
+        if (videoType === 'prologue') {
+            db.media.prologueVideo = videoUrl;
+        } else if (videoType === 'epilogue') {
+            db.media.epilogueVideo = videoUrl;
+        }
+
+        saveDB(db);
+
+        res.json({
+            status: 'success',
+            message: 'Видео сохранено!',
+            url: videoUrl
+        });
+
+    } catch (err) {
+        console.error('❌ Ошибка сохранения видео:', err);
+        res.status(500).json({
+            status: 'error',
+            message: err.message
+        });
+    }
+});
+
+// Обновить медиа (баннеры)
 router.post('/media', checkAdmin, (req, res) => {
     try {
         const { mainBanner, squareBanner1, squareBanner2, prologueVideo, epilogueVideo } = req.body;

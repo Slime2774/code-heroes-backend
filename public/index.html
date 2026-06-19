@@ -2133,51 +2133,145 @@
       // СОХРАНЕНИЕ МЕДИА
       // ============================================================
       document.getElementById('saveBannersBtn')?.addEventListener('click', function () {
-        const saveMedia = (inputId, storageKey, callback) => {
-          const input = document.getElementById(inputId);
-          if (input && input.files.length > 0) {
-            const file = input.files[0];
-            const reader = new FileReader();
-            reader.onload = function (e) {
-              localStorage.setItem(storageKey, e.target.result);
-              if (callback) callback(e.target.result);
-              showToast(`${storageKey} сохранен!`, "success");
-            };
-            reader.readAsDataURL(file);
-          }
+    const login = window.adminLogin || 'ivan_org';
+    const password = window.adminPassword || 'securePass99';
+
+    // ============================================================
+    // 1. СОХРАНЕНИЕ БАННЕРОВ (в localStorage)
+    // ============================================================
+    
+    // Главный баннер
+    const mainBannerInput = document.getElementById('mainBannerInput');
+    if (mainBannerInput && mainBannerInput.files.length > 0) {
+        const file = mainBannerInput.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            mediaData.mainBanner = e.target.result;
+            localStorage.setItem('mainBanner', e.target.result);
+            renderBanners();
+            showToast("✅ Главный баннер сохранен!", "success");
         };
+        reader.readAsDataURL(file);
+    }
 
-        saveMedia('mainBannerInput', 'mainBanner', (data) => {
-          mediaData.mainBanner = data;
-          renderBanners();
-        });
+    // Мини-баннер 1
+    const banner1Input = document.getElementById('squareBanner1Input');
+    if (banner1Input && banner1Input.files.length > 0) {
+        const file = banner1Input.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const bannerData = e.target.result;
+            let banners = JSON.parse(localStorage.getItem('squareBanners') || '[]');
+            banners[0] = bannerData;
+            localStorage.setItem('squareBanners', JSON.stringify(banners));
+            mediaData.squareBanners = banners;
+            renderBanners();
+            showToast("✅ Мини-баннер 1 сохранен!", "success");
+        };
+        reader.readAsDataURL(file);
+    }
 
-        saveMedia('squareBanner1Input', 'squareBanner1', (data) => {
-          let banners = JSON.parse(localStorage.getItem('squareBanners') || '[]');
-          banners[0] = data;
-          localStorage.setItem('squareBanners', JSON.stringify(banners));
-          mediaData.squareBanners = banners;
-          renderBanners();
-        });
+    // Мини-баннер 2
+    const banner2Input = document.getElementById('squareBanner2Input');
+    if (banner2Input && banner2Input.files.length > 0) {
+        const file = banner2Input.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const bannerData = e.target.result;
+            let banners = JSON.parse(localStorage.getItem('squareBanners') || '[]');
+            banners[1] = bannerData;
+            localStorage.setItem('squareBanners', JSON.stringify(banners));
+            mediaData.squareBanners = banners;
+            renderBanners();
+            showToast("✅ Мини-баннер 2 сохранен!", "success");
+        };
+        reader.readAsDataURL(file);
+    }
 
-        saveMedia('squareBanner2Input', 'squareBanner2', (data) => {
-          let banners = JSON.parse(localStorage.getItem('squareBanners') || '[]');
-          banners[1] = data;
-          localStorage.setItem('squareBanners', JSON.stringify(banners));
-          mediaData.squareBanners = banners;
-          renderBanners();
-        });
+    // ============================================================
+    // 2. СОХРАНЕНИЕ ВИДЕО (через сервер)
+    // ============================================================
+    
+    // Видео ПРОЛОГА
+    const prologueInput = document.getElementById('prologueVideoInput');
+    if (prologueInput && prologueInput.files.length > 0) {
+        const file = prologueInput.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const videoData = e.target.result;
+            
+            showToast("⏳ Загрузка видео пролога...", "info");
+            
+            fetch(`${BACKEND_URL}/admin/upload-video`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-admin-login': login,
+                    'x-admin-password': password
+                },
+                body: JSON.stringify({
+                    videoType: 'prologue',
+                    videoData: videoData
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    mediaData.prologue = data.url;
+                    localStorage.setItem('video_prologue', data.url);
+                    showToast('✅ Видео пролога сохранено!', 'success');
+                } else {
+                    showToast('❌ Ошибка: ' + data.message, 'error');
+                }
+            })
+            .catch(err => {
+                showToast('❌ Ошибка: ' + err.message, 'error');
+            });
+        };
+        reader.readAsDataURL(file);
+    }
 
-        saveMedia('prologueVideoInput', 'video_prologue', (data) => {
-          mediaData.prologue = data;
-        });
+    // Видео ЭПИЛОГА
+    const epilogueInput = document.getElementById('epilogueVideoInput');
+    if (epilogueInput && epilogueInput.files.length > 0) {
+        const file = epilogueInput.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const videoData = e.target.result;
+            
+            showToast("⏳ Загрузка видео эпилога...", "info");
+            
+            fetch(`${BACKEND_URL}/admin/upload-video`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-admin-login': login,
+                    'x-admin-password': password
+                },
+                body: JSON.stringify({
+                    videoType: 'epilogue',
+                    videoData: videoData
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    mediaData.epilogue = data.url;
+                    localStorage.setItem('video_epilogue', data.url);
+                    showToast('✅ Видео эпилога сохранено!', 'success');
+                } else {
+                    showToast('❌ Ошибка: ' + data.message, 'error');
+                }
+            })
+            .catch(err => {
+                showToast('❌ Ошибка: ' + err.message, 'error');
+            });
+        };
+        reader.readAsDataURL(file);
+    }
 
-        saveMedia('epilogueVideoInput', 'video_epilogue', (data) => {
-          mediaData.epilogue = data;
-        });
-
-        showToast("Медиа-файлы сохранены!", "success");
-      });
+    showToast("📤 Медиа-файлы загружаются...", "info");
+});
 
       showPage('main-page');
     });
