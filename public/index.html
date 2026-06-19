@@ -1,0 +1,2187 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CODE HEROES | Спаси город от NULL</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #04070E;
+      font-family: 'Inter', 'Segoe UI', 'Montserrat', sans-serif;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .header-team-info {
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .header-team-info strong {
+      color: #21B2BF;
+      text-shadow: 0 0 5px rgba(33, 178, 191, 0.4);
+    }
+
+    .app {
+      max-width: 1400px;
+      width: 100%;
+      background: #04070E;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* неон */
+    .neon-pink {
+      color: #B92278;
+      text-shadow: 0 0 5px #B92278;
+    }
+
+    .neon-blue {
+      color: #21B2BF;
+      text-shadow: 0 0 5px #21B2BF;
+    }
+
+    /* шапка */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 32px;
+      background: #04070E;
+      border-bottom: 1px solid #B9227844;
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, #B92278, #21B2BF);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      cursor: pointer;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      color: #c4c4e0;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 8px 0;
+      transition: 0.2s;
+    }
+
+    .nav-btn:hover {
+      color: #21B2BF;
+    }
+
+    .register-header-btn {
+      background: linear-gradient(135deg, #B92278, #8f1a5f);
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 0 10px #B9227866;
+    }
+
+    .register-header-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 18px #B92278;
+    }
+
+    .exit-btn {
+      background: rgba(185, 34, 120, 0.15);
+      border: 1px solid #B92278;
+      color: #B92278;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .exit-btn:hover {
+      background: rgba(185, 34, 120, 0.3);
+      box-shadow: 0 0 10px rgba(185, 34, 120, 0.4);
+    }
+
+    /* страницы */
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* БАННЕРЫ */
+    .season-banner {
+      width: 100%;
+      min-height: 40vh;
+      background: #0a0f18;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .season-banner img {
+      width: 100%;
+      height: 100%;
+      min-height: 40vh;
+      object-fit: cover;
+    }
+
+    .banner-placeholder {
+      background: #111722;
+      width: 100%;
+      height: 100%;
+      min-height: 40vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #B9227888;
+      font-size: 20px;
+      font-weight: 500;
+    }
+
+    .two-banners {
+      display: flex;
+      gap: 32px;
+      padding: 40px 32px 20px 32px;
+      justify-content: center;
+      flex-wrap: wrap;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .small-banner {
+      flex: 0 0 550px;
+      width: 550px;
+      height: 400px;
+      background: linear-gradient(145deg, #111722, #0a0d18);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #B9227844;
+      border-radius: 16px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .small-banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Блок правил */
+    .rules-section {
+      max-width: 1000px;
+      margin: 0 auto 50px auto;
+      padding: 10px 32px 20px 32px;
+      color: #fff;
+    }
+
+    .rules-section h2 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 28px;
+      text-align: center;
+      letter-spacing: 1px;
+      border-bottom: 2px solid #B9227844;
+      padding-bottom: 16px;
+    }
+
+    .rules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px 40px;
+      background: #0a0f18;
+      border: 1px solid #B9227844;
+      border-radius: 20px;
+      padding: 32px 36px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .rule-item {
+      display: flex;
+      flex-direction: column;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(185, 34, 120, 0.15);
+    }
+
+    .rule-item:last-child {
+      border-bottom: none;
+    }
+
+    .rule-item .rule-title {
+      font-weight: 700;
+      font-size: 15px;
+      color: #21B2BF;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .rule-item .rule-desc {
+      font-size: 15px;
+      color: #c4c4e0;
+      line-height: 1.6;
+    }
+
+    .rule-item .rule-desc strong {
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    .rule-item .rule-desc .highlight {
+      color: #B92278;
+      font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+      .rules-grid {
+        padding: 24px 20px;
+        gap: 16px;
+      }
+
+      .rule-item {
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(185, 34, 120, 0.1);
+      }
+
+      .rule-item:last-child {
+        border-bottom: none;
+      }
+    }
+
+    /* ФОРМА РЕГИСТРАЦИИ */
+    .form-page {
+      padding: 32px;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .form-title {
+      font-size: 28px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #B92278, #21B2BF);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    .form-tabs {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 28px;
+      border-bottom: 1px solid #B9227844;
+      padding-bottom: 12px;
+      justify-content: center;
+    }
+
+    .form-tab {
+      background: none;
+      border: none;
+      color: #a0a0d0;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 8px 20px;
+      cursor: pointer;
+      transition: 0.2s;
+      border-radius: 8px;
+    }
+
+    .form-tab.active {
+      background: linear-gradient(135deg, #B92278, #8f1a5f);
+      color: white;
+      box-shadow: 0 0 10px #B9227866;
+    }
+
+    .form-tab:hover:not(.active) {
+      color: #21B2BF;
+    }
+
+    .form-content {
+      display: none;
+      background: #AAAAAA;
+      border-radius: 28px;
+      padding: 36px 40px;
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.3);
+    }
+
+    .form-content.active {
+      display: block;
+    }
+
+    /* Стили формы */
+    .form-section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #B92278;
+      margin: 0 0 16px 0;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #B9227844;
+      display: inline-block;
+    }
+
+    .form-field {
+      margin-bottom: 22px;
+    }
+
+    .form-field label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1e1e2a;
+      margin-bottom: 6px;
+    }
+
+    .form-field input,
+    .form-field select,
+    .form-field textarea {
+      width: 100%;
+      padding: 12px 16px;
+      background: #FAFAFA;
+      border: 1px solid #8a8a8a;
+      border-radius: 14px;
+      color: #111;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+
+    .form-field input:focus,
+    .form-field select:focus,
+    .form-field textarea:focus {
+      outline: none;
+      border-color: #B92278;
+      box-shadow: 0 0 0 2px rgba(185, 34, 120, 0.2);
+    }
+
+    .member-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      align-items: center;
+    }
+
+    .member-name {
+      flex: 3;
+    }
+
+    .member-class {
+      flex: 1;
+      min-width: 100px;
+    }
+
+    .member-row input {
+      width: 100%;
+      padding: 12px 16px;
+      background: #FAFAFA;
+      border: 1px solid #8a8a8a;
+      border-radius: 14px;
+      font-size: 14px;
+    }
+
+    .add-member-btn {
+      background: none;
+      border: 1px solid #B92278;
+      color: #B92278;
+      padding: 8px 24px;
+      border-radius: 40px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 12px;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .add-member-btn:hover {
+      background: #B9227810;
+    }
+
+    .submit-form-btn {
+      background: linear-gradient(135deg, #B92278, #8f1a5f);
+      color: white;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 48px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 32px;
+      box-shadow: 0 5px 15px rgba(185, 34, 120, 0.3);
+      width: 100%;
+      transition: 0.2s;
+    }
+
+    .submit-form-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(185, 34, 120, 0.4);
+    }
+
+    .back-link {
+      background: none;
+      border: none;
+      color: #B92278;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 20px;
+      text-decoration: underline;
+      display: inline-block;
+    }
+
+    /* СТРАНИЦА ТУРА */
+    .tour-header-custom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 32px;
+      background: #04070E;
+      border-bottom: 1px solid #B9227844;
+    }
+
+    .tour-level {
+      font-size: 18px;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .timer {
+      color: #B92278;
+      font-size: 14px;
+    }
+
+    .tour-layout {
+      display: flex;
+      gap: 32px;
+      padding: 32px;
+      min-height: calc(100vh - 80px);
+    }
+
+    .left-sidebar {
+      width: 400px;
+      flex-shrink: 0;
+    }
+
+    .story-card {
+      background: #AAAAAA;
+      border-radius: 28px;
+      padding: 32px;
+      margin-bottom: 32px;
+      border-left: 6px solid #B92278;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+    }
+
+    .story-card h5 {
+      color: #B92278;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+    }
+
+    .story-text {
+      color: #1e1e2a;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .task-card {
+      background: #AAAAAA;
+      border-radius: 28px;
+      padding: 32px;
+      border-left: 6px solid #B92278;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+    }
+
+    .task-card h5 {
+      color: #B92278;
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .task-condition {
+      color: #1e1e2a;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .right-sandbox {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sandbox-area {
+      background: #AAAAAA;
+      border-radius: 28px;
+      padding: 32px;
+      border: 1px solid #8a8a8a;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .code-editor {
+      width: 100%;
+      min-height: 320px;
+      background: #1e1e2f;
+      border: 1px solid #B9227844;
+      border-radius: 20px;
+      color: #00ffcc;
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 14px;
+      padding: 20px;
+      resize: vertical;
+    }
+
+    .output-console {
+      background: #1e1e2f;
+      border: 1px solid #B9227844;
+      border-radius: 20px;
+      padding: 20px;
+      margin-top: 24px;
+      min-height: 140px;
+      color: #e0e0ff;
+      font-family: monospace;
+      font-size: 14px;
+    }
+
+    .task-buttons {
+      display: flex;
+      gap: 18px;
+      margin-top: 28px;
+      justify-content: space-between;
+    }
+
+    .task-nav-btn {
+      background: #2a2045;
+      border: 1px solid #B9227844;
+      padding: 12px 28px;
+      border-radius: 48px;
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .send-solution-btn {
+      background: linear-gradient(135deg, #B92278, #8f1a5f);
+      border: none;
+      padding: 12px 40px;
+      border-radius: 48px;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 0 12px #B9227866;
+      font-size: 14px;
+    }
+
+    /* ВИДЕО СТРАНИЦЫ */
+    .video-page-container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+
+    .video-wrapper {
+      background: #111722;
+      border: 2px solid #B92278;
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 0 0 25px rgba(185, 34, 120, 0.3);
+      margin-bottom: 30px;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 450px;
+    }
+
+    .video-placeholder-frame {
+      width: 100%;
+      height: 450px;
+      background: #04070E;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 1px dashed #21B2BF44;
+    }
+
+    .video-placeholder-frame iframe,
+    .video-placeholder-frame video {
+      width: 100%;
+      height: 100%;
+      border-radius: 16px;
+      border: none;
+    }
+
+    /* РЕЙТИНГ */
+    .rating-container {
+      padding: 32px;
+    }
+
+    .rating-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .rating-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #AAAAAA;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .rating-table th {
+      background: #9a9a9a;
+      padding: 14px 16px;
+      text-align: left;
+      color: #1e1e2a;
+      font-weight: 700;
+      font-size: 13px;
+      border-bottom: 1px solid #7a7a7a;
+    }
+
+    .rating-table td {
+      padding: 12px 16px;
+      color: #1e1e2a;
+      border-bottom: 1px solid #8e8e8e;
+      background: #AAAAAA;
+    }
+
+    .back-home-btn {
+      background: none;
+      border: 1px solid #21B2BF;
+      color: #21B2BF;
+      padding: 8px 22px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    /* АДМИН */
+    .admin-panel {
+      padding: 32px;
+    }
+
+    .tasks-admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+      background: #AAAAAA;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .tasks-admin-table th,
+    .tasks-admin-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #8a8a8a;
+      color: #1e1e2a;
+      background: #AAAAAA;
+    }
+
+    .tasks-admin-table th {
+      background: #9a9a9a;
+      font-weight: 700;
+    }
+
+    .edit-task-btn {
+      background: none;
+      border: 1px solid #B92278;
+      color: #B92278;
+      padding: 4px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .admin-edit-section {
+      margin-top: 32px;
+      padding: 24px;
+      background: #AAAAAA;
+      border-radius: 24px;
+      border: 1px solid #8a8a8a;
+    }
+
+    .banner-upload-area {
+      margin-top: 32px;
+      padding: 24px;
+      background: #AAAAAA;
+      border-radius: 24px;
+    }
+
+    .banner-preview {
+      margin-top: 16px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .banner-preview img {
+      max-width: 200px;
+      max-height: 120px;
+      border-radius: 8px;
+      border: 1px solid #21B2BF44;
+      object-fit: cover;
+    }
+
+    .banner-preview .preview-label {
+      color: #aaa;
+      font-size: 12px;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .banner-preview .preview-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .banner-preview video {
+      max-width: 200px;
+      max-height: 120px;
+      border-radius: 8px;
+      border: 1px solid #21B2BF44;
+    }
+
+    /* =========================================================================
+           СИСТЕМНЫЕ КУСТОМНЫЕ УВЕДОМЛЕНИЯ (ТОСТЫ / ПЛАШКИ)
+           ========================================================================= */
+    #toast-container {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .toast-card-custom {
+      background: #111422;
+      border-radius: 12px;
+      padding: 16px 24px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      min-width: 280px;
+      max-width: 400px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transform: translateX(120%);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+      opacity: 0;
+    }
+
+    .toast-card-custom.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .toast-success {
+      border-left: 5px solid #21B2BF;
+      box-shadow: 0 0 15px rgba(33, 178, 191, 0.2);
+    }
+
+    .toast-error {
+      border-left: 5px solid #B92278;
+      box-shadow: 0 0 15px rgba(185, 34, 120, 0.2);
+    }
+
+    .toast-info {
+      border-left: 5px solid #ffcc00;
+      box-shadow: 0 0 15px rgba(255, 204, 0, 0.2);
+    }
+
+    /* =========================================================================
+           МОДАЛЬНОЕ ОКНО
+           ========================================================================= */
+    .modal-overlay-custom {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(4, 7, 14, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 8888;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay-custom.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-window-custom {
+      background: #111524;
+      border: 2px solid #B92278;
+      box-shadow: 0 0 35px rgba(185, 34, 120, 0.4);
+      border-radius: 24px;
+      width: 90%;
+      max-width: 650px;
+      padding: 32px;
+      color: #fff;
+      transform: scale(0.85);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-align: center;
+    }
+
+    .modal-overlay-custom.active .modal-window-custom {
+      transform: scale(1);
+    }
+
+    .modal-title-custom {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #B92278, #21B2BF);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .modal-body-custom {
+      margin-bottom: 24px;
+      font-size: 15px;
+      line-height: 1.6;
+      color: #c4c4e0;
+    }
+
+    .modal-buttons-layout {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .modal-btn-confirm {
+      background: linear-gradient(135deg, #B92278, #8f1a5f);
+      border: none;
+      color: #fff;
+      padding: 12px 32px;
+      border-radius: 48px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .modal-btn-cancel {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      padding: 12px 32px;
+      border-radius: 48px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="toast-container"></div>
+
+  <div class="modal-overlay-custom" id="customModal">
+    <div class="modal-window-custom">
+      <div class="modal-title-custom" id="modalTitle">Уведомление</div>
+      <div class="modal-body-custom" id="modalBody">Содержимое модального окна</div>
+      <div class="modal-buttons-layout" id="modalButtons">
+        <button class="modal-btn-confirm" id="modalDefaultClose">Продолжить</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app" id="app">
+    <div class="header" id="header"></div>
+
+    <div id="main-page" class="page active">
+      <div class="season-banner" id="mainBanner">
+        <div class="banner-placeholder">БАННЕР СЕЗОНА 2026</div>
+      </div>
+      <div class="two-banners">
+        <div class="small-banner" id="squareBanner1">БАННЕР 1</div>
+        <div class="small-banner" id="squareBanner2">БАННЕР 2</div>
+      </div>
+
+      <!-- БЛОК ПРАВИЛ -->
+      <div class="rules-section" id="rules">
+        <h2>Правила турнира</h2>
+        <div class="rules-grid">
+          <div class="rule-item">
+            <div class="rule-title">Время</div>
+            <div class="rule-desc">На выполнение всех заданий даётся <strong>2 часа</strong>.</div>
+          </div>
+          <div class="rule-item">
+            <div class="rule-title">Команда</div>
+            <div class="rule-desc">В составе команды может быть от <strong>2 до 4 человек</strong>.</div>
+          </div>
+          <div class="rule-item">
+            <div class="rule-title">Задания</div>
+            <div class="rule-desc">Всего <strong>8 заданий</strong>: по <strong>4</strong> в каждом из двух туров.</div>
+          </div>
+          <div class="rule-item">
+            <div class="rule-title">Баллы</div>
+            <div class="rule-desc">Задания первого тура — <span class="highlight">10 очков</span>, второго — <span
+                class="highlight">20 очков</span>.</div>
+          </div>
+          <div class="rule-item">
+            <div class="rule-title">Победитель</div>
+            <div class="rule-desc">Побеждает команда с наибольшим количеством очков. При ничьей учитывается
+              <strong>время выполнения</strong> заданий.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tasksUserContainer" style="padding: 0 32px 32px 32px; display: none;">
+        <h2 style="color: #fff; margin-bottom: 20px; font-size: 24px;">Доступные задания тура</h2>
+        <div id="tasksGrid"
+          style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;"></div>
+      </div>
+    </div>
+
+    <div id="register-page" class="page">
+      <div class="form-page">
+        <div class="form-title">Регистрация</div>
+        <div class="form-tabs">
+          <button class="form-tab active" data-tab="participant">Участник</button>
+          <button class="form-tab" data-tab="organizer">Организатор</button>
+        </div>
+
+        <form id="participantForm">
+          <div id="participant-form" class="form-content active">
+            <div class="form-section-title">Информация о команде</div>
+            <div class="form-field">
+              <label>Название команды</label>
+              <input type="text" id="teamName" required placeholder="Введите название команды">
+            </div>
+            <div class="form-field">
+              <label>Школа</label>
+              <input type="text" id="schoolName" required placeholder="Введите номер школы">
+            </div>
+            <div class="form-field">
+              <label>Класс</label>
+              <select id="classSelect" required>
+                <option value="">Выберите класс</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+              </select>
+            </div>
+
+            <div class="form-section-title" style="margin-top: 28px;">Капитан команды</div>
+            <div class="form-field">
+              <label>Фамилия Имя Отчество</label>
+              <input type="text" id="captainName" required placeholder="Фамилия Имя Отчество">
+            </div>
+
+            <div class="form-section-title" style="margin-top: 28px;">Участники команды</div>
+            <div id="membersContainer">
+              <div class="member-row">
+                <input class="member-name" type="text" placeholder="1. Фамилия Имя">
+                <input class="member-class" type="text" placeholder="класс">
+              </div>
+              <div class="member-row">
+                <input class="member-name" type="text" placeholder="2. Фамилия Имя">
+                <input class="member-class" type="text" placeholder="класс">
+              </div>
+            </div>
+            <button type="button" class="add-member-btn" id="addMemberBtn">+ Добавить участника</button>
+            <button type="submit" class="submit-form-btn" id="startTourBtn">Зарегистрироваться</button>
+          </div>
+        </form>
+
+        <div id="organizer-form" class="form-content">
+          <div class="form-field"><label>Логин</label><input type="text" id="adminLogin" placeholder="Введите логин">
+          </div>
+          <div class="form-field"><label>Пароль</label><input type="password" id="adminPassword"
+              placeholder="Введите пароль"></div>
+          <button class="submit-form-btn" id="adminLoginBtn">Войти в админ-панель</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- СТРАНИЦА ПРОЛОГА -->
+    <div id="prologue-page" class="page">
+      <div class="video-page-container">
+        <h2 class="form-title" style="margin-bottom: 10px;">Введение в миссию</h2>
+        <p
+          style="color: #21B2BF; font-weight: 600; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px;">
+          Посмотрите пролог перед началом</p>
+        <div class="video-wrapper">
+          <div class="video-placeholder-frame" id="prologueVideoContainer">
+            <div style="color: #21B2BF; font-size: 18px; margin-bottom: 10px; font-weight: bold;">СЮЖЕТНЫЙ РОЛИК: НАЧАЛО
+              МИССИИ</div>
+            <div style="color: #8a8a8a; font-size: 14px;">(Загрузите видео в панели администратора)</div>
+          </div>
+        </div>
+        <button class="submit-form-btn" onclick="showPage('tour-page')"
+          style="max-width: 400px; background: linear-gradient(135deg, #21B2BF, #1a8f99); box-shadow: 0 5px 15px rgba(33, 178, 191, 0.3);">
+          Я готов, начать задания
+        </button>
+      </div>
+    </div>
+
+    <!-- СТРАНИЦА ЭПИЛОГА -->
+    <div id="epilogue-page" class="page">
+      <div class="video-page-container">
+        <h2 class="form-title"
+          style="margin-bottom: 10px; background: linear-gradient(135deg, #00ffcc, #21B2BF); -webkit-background-clip: text; color: transparent;">
+          Город спасен от NULL</h2>
+        <p
+          style="color: #00ffcc; font-weight: 600; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px;">
+          Вы прошли все испытания. Смотрите финал истории</p>
+        <div class="video-wrapper" style="border-color: #00ffcc; box-shadow: 0 0 25px rgba(0, 255, 204, 0.3);">
+          <div class="video-placeholder-frame" id="epilogueVideoContainer" style="border-color: #00ffcc44;">
+            <div style="color: #00ffcc; font-size: 18px; margin-bottom: 10px; font-weight: bold;">СЮЖЕТНЫЙ РОЛИК: ФИНАЛ
+              ИСТОРИИ</div>
+            <div style="color: #8a8a8a; font-size: 14px;">(Загрузите видео в панели администратора)</div>
+          </div>
+        </div>
+        <button class="submit-form-btn" onclick="showPage('rating-page')"
+          style="max-width: 400px; background: linear-gradient(135deg, #B92278, #8f1a5f);">
+          Перейти к таблице лидеров
+        </button>
+      </div>
+    </div>
+
+    <div id="tour-page" class="page">
+      <div class="tour-header-custom">
+        <div class="tour-level" id="tourLevelText">ЗАГРУЗКА ЗАДАЧИ...</div>
+        <div class="timer" id="tourTimerDisplay">до завершения тура 2:00:00</div>
+        <button class="exit-btn" id="exitTourBtn">Выйти</button>
+      </div>
+      <div class="tour-layout">
+        <div class="left-sidebar">
+          <div class="story-card">
+            <h5>СЮЖЕТ</h5>
+            <div class="story-text" id="storyBlock">Сюжетная линия подгружается...</div>
+          </div>
+          <div class="task-card">
+            <h5>ЗАДАНИЕ</h5>
+            <div class="task-condition" id="taskBlock">Условие задачи загружается...</div>
+          </div>
+        </div>
+        <div class="right-sandbox">
+          <div class="sandbox-area">
+            <textarea class="code-editor" id="codeEditor" placeholder="Напишите решение здесь..."></textarea>
+            <div class="output-console" id="outputConsole">Результат выполнения</div>
+            <div class="task-buttons">
+              <button class="task-nav-btn" id="prevTaskBtn">← Предыдущее</button>
+              <button class="task-nav-btn" id="nextTaskBtn">Следующее →</button>
+              <button class="send-solution-btn" id="sendTaskBtn">Отправить</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="rating-page" class="page">
+      <div class="rating-container">
+        <div class="rating-header"><button class="back-home-btn" id="backFromRating">← На главную</button></div>
+        <h2 style="color: #ffffff; font-size: 26px; margin-bottom: 8px;">Рейтинговая таблица</h2>
+        <p style="color: #B92278; margin-bottom: 24px;">Сезон 2026 "Спаси город от NULL"</p>
+        <table class="rating-table">
+          <thead>
+            <tr>
+              <th>Место</th>
+              <th>Команда</th>
+              <th>Школа</th>
+              <th>Баллы</th>
+            </tr>
+          </thead>
+          <tbody id="ratingBody">
+            <tr>
+              <td colspan="4" style="text-align: center; color: #2c2c3a;">🏆 Данные загружаются из базы данных...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="admin-panel-page" class="page">
+      <div class="admin-panel">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+          <h2 style="color: #B92278;">Админ-панель</h2>
+          <button class="exit-btn" id="logoutAdminBtn">Выйти</button>
+        </div>
+        <div style="display: flex; gap: 16px; margin-bottom: 28px;">
+          <button class="register-header-btn" id="showTasksAdminBtn"
+            style="background: linear-gradient(135deg,#B92278,#8f1a5f);">Редактор заданий</button>
+          <button class="register-header-btn" id="showBannersAdminBtn"
+            style="background: linear-gradient(135deg,#21B2BF,#1a8f99);">Загрузка баннеров</button>
+        </div>
+        <div id="adminTasksSection">
+          <div class="admin-edit-section"
+            style="margin-bottom: 30px; padding: 20px; border: 1px solid #333; border-radius: 8px; background: rgba(30, 30, 36, 0.5);">
+            <h3 style="color: #21B2BF; margin-top: 0; margin-bottom: 20px;">Создать новое задание</h3>
+            <form id="adminTaskForm">
+              <div style="display: flex; gap: 16px; margin-bottom: 16px;">
+                <div style="flex: 1;">
+                  <label style="color: #aaa; display: block; margin-bottom: 6px; font-size: 14px;">Тур</label>
+                  <input type="number" id="taskTour" value="1" min="1" required
+                    style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #444; background: #1a1a20; color: #fff; box-sizing: border-box;">
+                </div>
+                <div style="flex: 3;">
+                  <label style="color: #aaa; display: block; margin-bottom: 6px; font-size: 14px;">Название
+                    задачи</label>
+                  <input type="text" id="taskName" placeholder="Введите название..." required
+                    style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #444; background: #1a1a20; color: #fff; box-sizing: border-box;">
+                </div>
+                <div style="flex: 1;">
+                  <label style="color: #aaa; display: block; margin-bottom: 6px; font-size: 14px;">Баллы</label>
+                  <input type="number" id="taskPoints" value="10" min="1" required
+                    style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #444; background: #1a1a20; color: #fff; box-sizing: border-box;">
+                </div>
+              </div>
+
+              <div style="margin-bottom: 16px;">
+                <label style="color: #aaa; display: block; margin-bottom: 6px; font-size: 14px;">Сюжет / Художественное
+                  описание</label>
+                <textarea id="taskStory" rows="2" placeholder="Исторический контекст, лор..."
+                  style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #444; background: #1a1a20; color: #fff; font-family: inherit; resize: vertical; box-sizing: border-box;"></textarea>
+              </div>
+
+              <div style="margin-bottom: 16px;">
+                <label style="color: #aaa; display: block; margin-bottom: 6px; font-size: 14px;">Техническое задание
+                  (Условие)</label>
+                <textarea id="taskDesc" rows="4" placeholder="Что конкретно нужно сделать..." required
+                  style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #444; background: #1a1a20; color: #fff; font-family: inherit; resize: vertical; box-sizing: border-box;"></textarea>
+              </div>
+
+              <div style="margin-bottom: 24px;">
+                <label style="color: #aaa; display: block; margin-bottom: 6px; font-size: 14px;">Правильный ответ (для
+                  автопроверки)</label>
+                <input type="text" id="taskAnswer" placeholder="Точное значение ответа..." required
+                  style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #444; background: #1a1a20; color: #fff; box-sizing: border-box;">
+              </div>
+
+              <button type="submit" class="submit-form-btn"
+                style="width: 100%; margin: 0; background: linear-gradient(135deg,#21B2BF,#1a8f99);">
+                Сохранить задание
+              </button>
+            </form>
+          </div>
+
+          <table class="tasks-admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Тур</th>
+                <th>Баллы</th>
+                <th>Действия</th>
+              </tr>
+            </thead>
+            <tbody id="adminTasksBody">
+              <tr>
+                <td colspan="5" style="text-align:center;">Загрузка списка заданий...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="adminEditSection" style="display: none;" class="admin-edit-section"></div>
+        <div id="bannersUploadSection" style="display: none;" class="banner-upload-area">
+          <h3 style="color: #21B2BF; margin-bottom: 20px;">Загрузка баннеров и видео</h3>
+          <div class="form-field">
+            <label>Баннер сезона (основной широкий)</label>
+            <input type="file" id="mainBannerInput" accept="image/*">
+            <div id="mainBannerPreview" class="banner-preview"></div>
+          </div>
+          <div class="form-field">
+            <label>Мини-баннер 1 (левый)</label>
+            <input type="file" id="squareBanner1Input" accept="image/*">
+            <div id="squareBanner1Preview" class="banner-preview"></div>
+          </div>
+          <div class="form-field">
+            <label>Мини-баннер 2 (правый)</label>
+            <input type="file" id="squareBanner2Input" accept="image/*">
+            <div id="squareBanner2Preview" class="banner-preview"></div>
+          </div>
+          <div class="form-field">
+            <label>Видео ПРОЛОГА (загрузите MP4 файл)</label>
+            <input type="file" id="prologueVideoInput" accept=".mp4,.webm,.ogg">
+            <div id="prologueVideoPreview" class="banner-preview" style="margin-top:8px;"></div>
+          </div>
+          <div class="form-field">
+            <label>Видео ЭПИЛОГА (загрузите MP4 файл)</label>
+            <input type="file" id="epilogueVideoInput" accept=".mp4,.webm,.ogg">
+            <div id="epilogueVideoPreview" class="banner-preview" style="margin-top:8px;"></div>
+          </div>
+          <button class="submit-form-btn" id="saveBannersBtn">Сохранить медиа-файлы</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================
+    // БЭКЕНД НАСТРОЙКИ (Node.js)
+    // ============================================================
+    const BACKEND_URL = "/api";
+
+    let serverTasks = [];
+    let currentTaskIndex = 0;
+    let isTaskSubmitting = false;
+
+    // Хранилище для ссылок на видео и баннеры (localStorage)
+    let mediaData = {
+      prologue: localStorage.getItem('video_prologue') || '',
+      epilogue: localStorage.getItem('video_epilogue') || '',
+      mainBanner: localStorage.getItem('mainBanner') || '',
+      squareBanners: JSON.parse(localStorage.getItem('squareBanners') || '[]')
+    };
+
+    // ============================================================
+    // СИСТЕМА УВЕДОМЛЕНИЙ
+    // ============================================================
+    function showToast(message, type = "info") {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = `toast-card-custom toast-${type}`;
+      toast.innerHTML = `<span>${message}</span>`;
+
+      container.appendChild(toast);
+      setTimeout(() => toast.classList.add('show'), 50);
+
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    function openCustomModal(title, bodyHtml, actionButtonsHtml = null) {
+      const modal = document.getElementById('customModal');
+      const mTitle = document.getElementById('modalTitle');
+      const mBody = document.getElementById('modalBody');
+      const mButtons = document.getElementById('modalButtons');
+
+      if (!modal) return;
+
+      mTitle.textContent = title;
+      mBody.innerHTML = bodyHtml;
+
+      if (actionButtonsHtml) {
+        mButtons.innerHTML = actionButtonsHtml;
+      } else {
+        mButtons.innerHTML = `<button class="modal-btn-confirm" id="modalDefaultClose">Продолжить</button>`;
+        document.getElementById('modalDefaultClose')?.addEventListener('click', closeCustomModal);
+      }
+
+      modal.classList.add('active');
+    }
+
+    function closeCustomModal() {
+      document.getElementById('customModal')?.classList.remove('active');
+    }
+
+    function confirmLogoutTeam(onConfirm) {
+      const bodyContent = `<p>Вы действительно хотите выйти из текущей команды?</p>`;
+      const buttonsHtml = `
+                <button class="modal-btn-cancel" id="logoutCancel">Остаться</button>
+                <button class="modal-btn-confirm" id="logoutConfirm" style="background:linear-gradient(135deg, #b92222, #731313);">Выйти</button>
+            `;
+      openCustomModal("Выход из профиля команды", bodyContent, buttonsHtml);
+
+      document.getElementById('logoutCancel')?.addEventListener('click', closeCustomModal);
+      document.getElementById('logoutConfirm')?.addEventListener('click', () => {
+        closeCustomModal();
+        onConfirm();
+      });
+    }
+
+    // ============================================================
+    // ФУНКЦИИ ДЛЯ БАННЕРОВ
+    // ============================================================
+    function renderBanners() {
+      const mainBannerContainer = document.getElementById('mainBanner');
+      if (mainBannerContainer) {
+        if (mediaData.mainBanner) {
+          mainBannerContainer.innerHTML = `<img src="${mediaData.mainBanner}" alt="Главный баннер">`;
+        } else {
+          mainBannerContainer.innerHTML = `<div class="banner-placeholder">БАННЕР СЕЗОНА 2026</div>`;
+        }
+      }
+
+      const banner1 = document.getElementById('squareBanner1');
+      const banner2 = document.getElementById('squareBanner2');
+
+      if (mediaData.squareBanners && mediaData.squareBanners.length > 0) {
+        if (banner1) {
+          banner1.innerHTML = mediaData.squareBanners[0] ? `<img src="${mediaData.squareBanners[0]}" alt="Баннер 1">` :
+            'БАННЕР 1';
+        }
+        if (banner2) {
+          banner2.innerHTML = mediaData.squareBanners[1] ? `<img src="${mediaData.squareBanners[1]}" alt="Баннер 2">` :
+            'БАННЕР 2';
+        }
+      } else {
+        if (banner1) banner1.innerHTML = 'БАННЕР 1';
+        if (banner2) banner2.innerHTML = 'БАННЕР 2';
+      }
+    }
+
+    function previewImage(inputId, previewId) {
+      const input = document.getElementById(inputId);
+      const preview = document.getElementById(previewId);
+      if (!input || !preview) return;
+
+      const file = input.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          preview.innerHTML = `
+                        <div class="preview-item">
+                            <span class="preview-label">Предпросмотр:</span>
+                            <img src="${e.target.result}" alt="Превью">
+                        </div>
+                    `;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        preview.innerHTML = '';
+      }
+    }
+
+    function previewVideo(inputId, previewId) {
+      const input = document.getElementById(inputId);
+      const preview = document.getElementById(previewId);
+      if (!input || !preview) return;
+
+      const file = input.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          preview.innerHTML = `
+                        <div class="preview-item">
+                            <span class="preview-label">Предпросмотр видео:</span>
+                            <video src="${e.target.result}" controls style="max-width:200px; max-height:120px; border-radius:8px; border:1px solid #21B2BF44;"></video>
+                        </div>
+                    `;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        preview.innerHTML = '';
+      }
+    }
+
+    // ============================================================
+    // НАВИГАЦИЯ
+    // ============================================================
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+
+      const targetPage = document.getElementById(pageId);
+      if (targetPage) {
+        targetPage.classList.add('active');
+      } else {
+        console.error(`Страница с id="${pageId}" не найдена!`);
+        return;
+      }
+
+      updateHeader(pageId);
+
+      if (pageId === 'tour-page') {
+        loadTasksFromServer();
+        if (localStorage.getItem("currentTeamId")) {
+          initTourTimer();
+        }
+      }
+
+      if (pageId === 'rating-page') loadLeaderboardFromServer();
+      if (pageId === 'prologue-page') renderVideo('prologueVideoContainer', mediaData.prologue, 'СЮЖЕТНЫЙ РОЛИК: НАЧАЛО МИССИИ');
+      if (pageId === 'epilogue-page') renderVideo('epilogueVideoContainer', mediaData.epilogue, 'СЮЖЕТНЫЙ РОЛИК: ФИНАЛ ИСТОРИИ');
+      if (pageId === 'main-page') renderBanners();
+    }
+
+    function renderVideo(containerId, url, fallbackText) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      if (!url || url.trim() === "") {
+        container.innerHTML =
+          `<div style="color: #21B2BF; font-size: 18px; margin-bottom: 10px; font-weight: bold;">${fallbackText}</div><div style="color: #8a8a8a; font-size: 14px;">(Загрузите видео в панели администратора)</div>`;
+        return;
+      }
+
+      if (url.startsWith('data:video/') || url.match(/\.(mp4|webm|ogg)$/i)) {
+        container.innerHTML = `<video src="${url}" controls autoplay muted style="width:100%; height:100%; object-fit:contain;"></video>`;
+      } else if (url.includes('youtube.com/embed') || url.includes('vk.com/video_ext.php')) {
+        container.innerHTML =
+          `<iframe src="${url}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+      } else {
+        let embedUrl = url;
+        if (url.includes('youtube.com/watch?v=')) {
+          embedUrl = url.replace('watch?v=', 'embed/');
+        } else if (url.includes('youtu.be/')) {
+          embedUrl = url.replace('youtu.be/', 'youtube.com/embed/');
+        }
+        container.innerHTML =
+          `<iframe src="${embedUrl}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+      }
+    }
+
+    function updateHeader(currentPage) {
+      const header = document.getElementById('header');
+      if (!header) return;
+
+      const savedTeam = localStorage.getItem("currentTeamName") || "";
+      const teamBadge = savedTeam ?
+        `<span style="color:#21B2BF;font-size:14px;font-weight:600;margin-right:15px;">Команда: ${savedTeam}</span>` :
+        "";
+      const logoHtml = `<div class="logo" onclick="showPage('main-page')">CODE HEROES</div>`;
+
+      if (currentPage === 'main-page') {
+        let actionButton = "";
+        let taskButton = "";
+
+        if (savedTeam) {
+          taskButton =
+            `<button class="nav-btn" onclick="showPage('tour-page')" style="color:#00ffcc;">Задания тура</button>`;
+          actionButton =
+            `<button class="nav-btn" id="logoutTeamBtn" style="color: #ff3366; font-weight: 600;">Выйти</button>`;
+        } else {
+          actionButton = `<button class="register-header-btn" onclick="showPage('register-page')">Регистрация / Вход</button>`;
+        }
+
+        header.innerHTML = `
+                    ${logoHtml}
+                    <div class="nav-links">
+                        ${teamBadge}
+                        ${taskButton}
+                        <button class="nav-btn" onclick="document.getElementById('rules').scrollIntoView({behavior:'smooth'})">Правила</button>
+                        <button class="nav-btn" onclick="showPage('rating-page')">Рейтинг</button>
+                        ${actionButton}
+                    </div>
+                `;
+
+        document.getElementById('logoutTeamBtn')?.addEventListener('click', () => {
+          confirmLogoutTeam(() => {
+            localStorage.removeItem("currentTeamId");
+            localStorage.removeItem("currentTeamName");
+            showToast("Вы успешно вышли из команды.", "info");
+            showPage('main-page');
+          });
+        });
+
+      } else {
+        header.innerHTML = `
+                    ${logoHtml}
+                    <div class="nav-links">
+                        <button class="nav-btn" onclick="showPage('main-page')">Главная</button>
+                        ${savedTeam ? `<button class="nav-btn" onclick="showPage('tour-page')">Задания</button>` : ''}
+                        <button class="nav-btn" onclick="showPage('rating-page')">Рейтинг</button>
+                        ${teamBadge}
+                    </div>
+                `;
+      }
+    }
+
+    // ============================================================
+    // ТАЙМЕР ТУРА
+    // ============================================================
+    function initTourTimer() {
+      if (window.tourTimerInterval) clearInterval(window.tourTimerInterval);
+
+      let deadline = localStorage.getItem("tourDeadline");
+
+      if (!deadline) {
+        const twoHoursMs = 2 * 60 * 60 * 1000;
+        deadline = Date.now() + twoHoursMs;
+        localStorage.setItem("tourDeadline", deadline);
+      }
+
+      function updateTimerDisplay() {
+        const now = Date.now();
+        const timeLeft = deadline - now;
+        const displayEl = document.getElementById("tourTimerDisplay");
+
+        if (!displayEl) return;
+
+        if (timeLeft <= 0) {
+          clearInterval(window.tourTimerInterval);
+          displayEl.textContent = "время тура истекло 00:00:00";
+          displayEl.style.color = "#ff3366";
+
+          document.getElementById("sendTaskBtn").disabled = true;
+          document.getElementById("codeEditor").disabled = true;
+
+          setTimeout(() => showPage('rating-page'), 1500);
+          return;
+        }
+
+        const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
+        const seconds = Math.floor((timeLeft / 1000) % 60);
+
+        const formatNum = (num) => String(num).padStart(2, '0');
+        displayEl.textContent =
+          `до завершения туров ${formatNum(hours)}:${formatNum(minutes)}:${formatNum(seconds)}`;
+      }
+
+      updateTimerDisplay();
+      window.tourTimerInterval = setInterval(updateTimerDisplay, 1000);
+    }
+
+    // ============================================================
+    // РАБОТА С ЗАДАНИЯМИ (СЕРВЕР)
+    // ============================================================
+    function loadTasksFromServer() {
+      const taskBlock = document.getElementById('taskBlock');
+      const teamId = localStorage.getItem("currentTeamId") || "";
+
+      fetch(`${BACKEND_URL}/tasks?teamId=${teamId}`)
+        .then(res => res.json())
+        .then(tasks => {
+          if (tasks && tasks.length > 0) {
+            serverTasks = tasks;
+            currentTaskIndex = 0;
+            renderCurrentTask();
+          } else {
+            if (taskBlock) taskBlock.innerHTML = "В базе данных пока нет созданных задач.";
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          if (taskBlock) taskBlock.innerHTML =
+            "<span style='color:red;'>Ошибка получения данных. Убедитесь что сервер запущен!</span>";
+        });
+    }
+
+    function renderCurrentTask() {
+      if (serverTasks.length === 0) return;
+      const currentTask = serverTasks[currentTaskIndex];
+
+      document.getElementById('tourLevelText').textContent = `ТУР ${currentTask.tour || 1} — ${currentTask.name || 'Задача'}`;
+      document.getElementById('storyBlock').textContent = currentTask.story || "Сюжет отсутствует.";
+      document.getElementById('taskBlock').textContent = currentTask.description || "Условие не задано.";
+
+      const consoleEl = document.getElementById('outputConsole');
+      const editor = document.getElementById('codeEditor');
+
+      if (currentTask.isSolved) {
+        editor.disabled = true;
+        editor.value = "✅ Задача выполнена!";
+        consoleEl.innerHTML = "<span style='color:#00ffcc;'>[DONE] Задача выполнена!</span>";
+      } else {
+        editor.disabled = false;
+        editor.value = "";
+        consoleEl.textContent =
+          `Задача [ID: ${currentTask.id}] готова. Ожидание ответа... | Стоимость: ${currentTask.points} баллов.`;
+      }
+    }
+
+    function loadLeaderboardFromServer() {
+      const tableBody = document.getElementById('ratingBody');
+      if (!tableBody) return;
+
+      fetch(`${BACKEND_URL}/leaderboard`)
+        .then(res => res.json())
+        .then(teams => {
+          tableBody.innerHTML = "";
+          if (!teams || teams.length === 0) {
+            tableBody.innerHTML =
+              "<tr><td colspan='4' style='text-align: center;'>Зарегистрированных команд пока нет.</td></tr>";
+            return;
+          }
+
+          teams.forEach((team, index) => {
+            const row = `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td><strong>${team.teamName || 'Без названия'}</strong></td>
+                                <td>${team.school || '—'}</td>
+                                <td style="font-weight: 700; color: #000000;">${team.points || 0}</td>
+                            </tr>
+                        `;
+            tableBody.insertAdjacentHTML('beforeend', row);
+          });
+        })
+        .catch(err => {
+          console.error(err);
+          tableBody.innerHTML =
+            "<tr><td colspan='4' style='text-align: center; color:red;'>Ошибка загрузки таблицы лидеров.</td></tr>";
+        });
+    }
+
+    function loadTasksToAdminTable() {
+      const adminTableBody = document.getElementById('adminTasksBody');
+      if (!adminTableBody) return;
+
+      adminTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">⏳ Загрузка...</td></tr>';
+
+      const login = window.adminLogin || 'ivan_org';
+      const password = window.adminPassword || 'securePass99';
+
+      console.log('📤 Запрос задач с логином:', login);
+
+      fetch(`${BACKEND_URL}/admin/tasks`, {
+        method: 'GET',
+        headers: {
+          'x-admin-login': login,
+          'x-admin-password': password,
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(res => {
+          console.log('📊 Статус ответа:', res.status);
+          if (res.status === 401) {
+            throw new Error('Неверный логин или пароль!');
+          }
+          if (!res.ok) {
+            throw new Error('Ошибка сервера: ' + res.status);
+          }
+          return res.json();
+        })
+        .then(data => {
+          console.log('📋 Получено данных:', data);
+          console.log('📋 Это массив?', Array.isArray(data));
+          console.log('📋 Количество задач:', data.length);
+
+          adminTableBody.innerHTML = "";
+
+          // Проверяем что data - это массив
+          if (!Array.isArray(data)) {
+            console.error('❌ Сервер вернул не массив:', data);
+            adminTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" style="text-align:center; color:#ff3366; padding: 20px;">
+                                ❌ Ошибка: сервер вернул не массив задач
+                            </td>
+                        </tr>
+                    `;
+            return;
+          }
+
+          if (data.length === 0) {
+            adminTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" style="text-align:center; padding: 30px; color: #666;">
+                                📭 В базе данных задач пока нет. Создайте первую!
+                            </td>
+                        </tr>
+                    `;
+            return;
+          }
+
+          data.forEach(task => {
+            const row = `
+                        <tr>
+                            <td><strong>${task.id || '—'}</strong></td>
+                            <td><strong>${task.name || 'Без названия'}</strong></td>
+                            <td>Тур ${task.tour || 1}</td>
+                            <td><span style="color: #21B2BF; font-weight: bold;">${task.points || 0}</span></td>
+                            <td style="text-align:center;">
+                                <button class="exit-btn" 
+                                        style="padding: 4px 12px; font-size:12px; background: #b92222; color: white; border: none; border-radius: 4px; cursor: pointer;" 
+                                        onclick="deleteTask('${task.id}')">
+                                    🗑 Удалить
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+            adminTableBody.insertAdjacentHTML('beforeend', row);
+          });
+        })
+        .catch(err => {
+          console.error('❌ Ошибка:', err);
+          adminTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align:center; color:#ff3366; padding: 20px;">
+                            ❌ ${err.message}<br>
+                            <small>Используйте логин: ivan_org, пароль: securePass99</small>
+                        </td>
+                    </tr>
+                `;
+        });
+    }
+
+    function deleteTask(taskId) {
+      if (!confirm(`Удалить задачу ${taskId}?`)) return;
+
+      const login = window.adminLogin || 'ivan_org';
+      const password = window.adminPassword || 'securePass99';
+
+      fetch(`${BACKEND_URL}/admin/task/${taskId}`, {
+        method: 'DELETE',
+        headers: {
+          'x-admin-login': login,
+          'x-admin-password': password,
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 'success') {
+            showToast('Задача удалена!', 'success');
+            loadTasksToAdminTable();
+          } else {
+            showToast('Ошибка удаления: ' + data.message, 'error');
+          }
+        })
+        .catch(err => {
+          showToast('Ошибка: ' + err.message, 'error');
+        });
+    }
+
+    // ============================================================
+    // ОБРАБОТЧИКИ СОБЫТИЙ
+    // ============================================================
+    document.addEventListener("DOMContentLoaded", () => {
+
+      renderBanners();
+
+      if (localStorage.getItem("currentTeamId")) {
+        initTourTimer();
+      }
+
+      // Выход из тура
+      document.getElementById('exitTourBtn')?.addEventListener('click', () => {
+        localStorage.removeItem("tourDeadline");
+        if (window.tourTimerInterval) clearInterval(window.tourTimerInterval);
+        showPage('main-page');
+      });
+
+      document.getElementById('backFromRating')?.addEventListener('click', () => showPage('main-page'));
+      document.getElementById('logoutAdminBtn')?.addEventListener('click', () => showPage('main-page'));
+
+      // ============================================================
+      // АВТОРИЗАЦИЯ АДМИНА
+      // ============================================================
+      // Авторизация организатора
+      document.getElementById('adminLoginBtn')?.addEventListener('click', function (e) {
+        e.preventDefault();
+        const loginInput = document.getElementById('adminLogin')?.value || "";
+        const passwordInput = document.getElementById('adminPassword')?.value || "";
+
+        if (!loginInput.trim() || !passwordInput.trim()) {
+          showToast("Заполните логин и пароль организатора!", "error");
+          return;
+        }
+
+        const login = loginInput.trim();
+        const password = passwordInput.trim();
+
+        console.log('🔑 Попытка входа:', login);
+
+        // Сохраняем для будущих запросов
+        window.adminLogin = login;
+        window.adminPassword = password;
+
+        // Проверяем через API
+        fetch(`${BACKEND_URL}/admin/tasks`, {
+          method: 'GET',
+          headers: {
+            'x-admin-login': login,
+            'x-admin-password': password,
+            'Content-Type': 'application/json'
+          }
+        })
+          .then(res => {
+            console.log('📊 Статус ответа:', res.status);
+            if (res.status === 401) {
+              throw new Error('Неверный логин или пароль!');
+            }
+            if (!res.ok) {
+              throw new Error('Ошибка сервера: ' + res.status);
+            }
+            return res.json();
+          })
+          .then(tasks => {
+            console.log('✅ Успешный вход! Задач:', tasks.length);
+            showToast("Авторизация успешна!", "success");
+            document.getElementById('adminLogin').value = "";
+            document.getElementById('adminPassword').value = "";
+
+            showPage('admin-panel-page');
+            loadTasksToAdminTable();
+          })
+          .catch(err => {
+            console.error('❌ Ошибка:', err);
+            showToast("❌ " + err.message + " Используйте логин: ivan_org, пароль: securePass99", "error");
+          });
+      });
+
+      // ============================================================
+      // ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК РЕГИСТРАЦИИ
+      // ============================================================
+      const tabs = document.querySelectorAll('.form-tab');
+      const contents = document.querySelectorAll('.form-content');
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          contents.forEach(c => c.classList.remove('active'));
+
+          if (tab.dataset.tab === 'participant') {
+            document.getElementById('participant-form')?.classList.add('active');
+          } else {
+            document.getElementById('organizer-form')?.classList.add('active');
+          }
+        });
+      });
+
+      // ============================================================
+      // ДОБАВЛЕНИЕ УЧАСТНИКОВ
+      // ============================================================
+      let memberCount = 2;
+      document.getElementById('addMemberBtn')?.addEventListener('click', () => {
+        memberCount++;
+        const container = document.getElementById('membersContainer');
+        if (!container) return;
+        const div = document.createElement('div');
+        div.className = 'member-row';
+        div.innerHTML =
+          `<input class="member-name" type="text" placeholder="${memberCount}. Фамилия Имя"><input class="member-class" type="text" placeholder="класс">`;
+        container.appendChild(div);
+      });
+
+      // ============================================================
+      // РЕГИСТРАЦИЯ КОМАНДЫ
+      // ============================================================
+      document.getElementById('participantForm')?.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const submitBtn = document.getElementById('startTourBtn');
+        const teamNameValue = document.getElementById('teamName')?.value;
+
+        if (!teamNameValue || !teamNameValue.trim()) {
+          showToast("Введите название команды!", "error");
+          return;
+        }
+
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.innerText = "Проверка...";
+        }
+
+        const payload = {
+          teamName: teamNameValue.trim(),
+          school: document.getElementById('schoolName')?.value || "",
+          class: document.getElementById('classSelect')?.value || "",
+          captainName: document.getElementById('captainName')?.value || ""
+        };
+
+        fetch(`${BACKEND_URL}/teams/register`, {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.status === "success") {
+              localStorage.removeItem("tourDeadline");
+              if (window.tourTimerInterval) clearInterval(window.tourTimerInterval);
+
+              localStorage.setItem("currentTeamId", data.teamId);
+              localStorage.setItem("currentTeamName", data.teamName);
+
+              showToast(data.isExisting ? `С возвращением! ${data.teamName}` :
+                `Успешная регистрация! ID: ${data.teamId}`, "success");
+
+              document.getElementById('participantForm')?.reset();
+              showPage('prologue-page');
+            } else {
+              showToast("Ошибка: " + data.message, "error");
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            showToast("Не удалось связаться с сервером.", "error");
+          })
+          .finally(() => {
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.innerText = "Зарегистрироваться";
+            }
+          });
+      });
+
+      // ============================================================
+      // ОТПРАВКА РЕШЕНИЯ
+      // ============================================================
+      document.getElementById('sendTaskBtn')?.addEventListener('click', () => {
+        const teamId = localStorage.getItem("currentTeamId");
+        const editor = document.getElementById('codeEditor');
+        const consoleEl = document.getElementById('outputConsole');
+
+        if (!teamId) {
+          showToast("Сначала зарегистрируйтесь!", "error");
+          return;
+        }
+        if (serverTasks.length === 0) {
+          showToast("Заданий пока нет!", "error");
+          return;
+        }
+        if (!editor || !editor.value.trim()) {
+          showToast("Введите ответ!", "error");
+          return;
+        }
+
+        const currentTask = serverTasks[currentTaskIndex];
+        consoleEl.textContent = "Отправка решения...";
+
+        const payload = {
+          teamId: teamId,
+          taskId: currentTask.id,
+          answer: editor.value.trim()
+        };
+
+        fetch(`${BACKEND_URL}/tasks/submit`, {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.isCorrect) {
+              consoleEl.innerHTML = `<span style='color:#00ffcc; font-weight:bold;'>✅ ${data.message}</span>`;
+              showToast(`✅ Правильно! +${data.pointsEarned} баллов`, "success");
+              currentTask.isSolved = true;
+              editor.disabled = true;
+
+              if (currentTaskIndex >= serverTasks.length - 1) {
+                setTimeout(() => showPage('epilogue-page'), 1500);
+              } else {
+                setTimeout(() => {
+                  currentTaskIndex++;
+                  renderCurrentTask();
+                }, 1500);
+              }
+            } else {
+              consoleEl.innerHTML = `<span style='color:#ff6b6b;'>❌ ${data.message}</span>`;
+              showToast("❌ Неправильно, попробуй еще раз!", "error");
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            consoleEl.textContent = "Ошибка сети при отправке решения.";
+            showToast("Ошибка отправки. Попробуйте ещё раз.", "error");
+          });
+      });
+
+      // ============================================================
+      // НАВИГАЦИЯ ПО ЗАДАЧАМ
+      // ============================================================
+      document.getElementById('prevTaskBtn')?.addEventListener('click', () => {
+        if (currentTaskIndex > 0) {
+          currentTaskIndex--;
+          renderCurrentTask();
+        }
+      });
+
+      document.getElementById('nextTaskBtn')?.addEventListener('click', () => {
+        if (currentTaskIndex < serverTasks.length - 1) {
+          currentTaskIndex++;
+          renderCurrentTask();
+        }
+      });
+
+      // ============================================================
+      // АДМИН-ПАНЕЛЬ: ВКЛАДКИ
+      // ============================================================
+      document.getElementById('showTasksAdminBtn')?.addEventListener('click', () => {
+        document.getElementById('adminTasksSection').style.display = 'block';
+        document.getElementById('bannersUploadSection').style.display = 'none';
+      });
+
+      document.getElementById('showBannersAdminBtn')?.addEventListener('click', () => {
+        document.getElementById('adminTasksSection').style.display = 'none';
+        document.getElementById('bannersUploadSection').style.display = 'block';
+      });
+
+      // ============================================================
+      // ПРЕДПРОСМОТР БАННЕРОВ И ВИДЕО
+      // ============================================================
+      document.getElementById('mainBannerInput')?.addEventListener('change', function () {
+        previewImage('mainBannerInput', 'mainBannerPreview');
+      });
+      document.getElementById('squareBanner1Input')?.addEventListener('change', function () {
+        previewImage('squareBanner1Input', 'squareBanner1Preview');
+      });
+      document.getElementById('squareBanner2Input')?.addEventListener('change', function () {
+        previewImage('squareBanner2Input', 'squareBanner2Preview');
+      });
+      document.getElementById('prologueVideoInput')?.addEventListener('change', function () {
+        previewVideo('prologueVideoInput', 'prologueVideoPreview');
+      });
+      document.getElementById('epilogueVideoInput')?.addEventListener('change', function () {
+        previewVideo('epilogueVideoInput', 'epilogueVideoPreview');
+      });
+
+      // ============================================================
+      // СОЗДАНИЕ ЗАДАЧИ (АДМИН)
+      // ============================================================
+      // Админ-панель: отправка новой задачи
+      document.getElementById('adminTaskForm')?.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (isTaskSubmitting) return;
+
+        const submitBtn = this.querySelector('button[type="submit"]');
+        isTaskSubmitting = true;
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.innerText = "Сохранение...";
+        }
+
+        const login = window.adminLogin || 'ivan_org';
+        const password = window.adminPassword || 'securePass99';
+
+        // Собираем данные из формы
+        const payload = {
+          tour: document.getElementById('taskTour').value,
+          name: document.getElementById('taskName').value,
+          story: document.getElementById('taskStory').value,
+          description: document.getElementById('taskDesc').value,
+          points: document.getElementById('taskPoints').value,
+          correctAnswer: document.getElementById('taskAnswer').value
+        };
+
+        console.log('📤 Отправка задачи:', payload);
+
+        fetch(`${BACKEND_URL}/admin/task`, {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json',
+            'x-admin-login': login,
+            'x-admin-password': password
+          },
+          body: JSON.stringify(payload)
+        })
+          .then(res => {
+            console.log('📊 Статус ответа:', res.status);
+            return res.json();
+          })
+          .then(data => {
+            console.log('📥 Ответ сервера:', data);
+            if (data.status === "success") {
+              showToast(`✅ Задача добавлена! ID: ${data.taskId}`, "success");
+              document.getElementById('adminTaskForm').reset();
+              loadTasksToAdminTable();
+            } else {
+              showToast("❌ Ошибка: " + (data.message || 'Неизвестная ошибка'), "error");
+            }
+          })
+          .catch(err => {
+            console.error('❌ Ошибка:', err);
+            showToast("❌ Ошибка: " + err.message, "error");
+          })
+          .finally(() => {
+            isTaskSubmitting = false;
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.innerText = "Сохранить задание";
+            }
+          });
+      });
+
+      // ============================================================
+      // СОХРАНЕНИЕ МЕДИА
+      // ============================================================
+      document.getElementById('saveBannersBtn')?.addEventListener('click', function () {
+        const saveMedia = (inputId, storageKey, callback) => {
+          const input = document.getElementById(inputId);
+          if (input && input.files.length > 0) {
+            const file = input.files[0];
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              localStorage.setItem(storageKey, e.target.result);
+              if (callback) callback(e.target.result);
+              showToast(`${storageKey} сохранен!`, "success");
+            };
+            reader.readAsDataURL(file);
+          }
+        };
+
+        saveMedia('mainBannerInput', 'mainBanner', (data) => {
+          mediaData.mainBanner = data;
+          renderBanners();
+        });
+
+        saveMedia('squareBanner1Input', 'squareBanner1', (data) => {
+          let banners = JSON.parse(localStorage.getItem('squareBanners') || '[]');
+          banners[0] = data;
+          localStorage.setItem('squareBanners', JSON.stringify(banners));
+          mediaData.squareBanners = banners;
+          renderBanners();
+        });
+
+        saveMedia('squareBanner2Input', 'squareBanner2', (data) => {
+          let banners = JSON.parse(localStorage.getItem('squareBanners') || '[]');
+          banners[1] = data;
+          localStorage.setItem('squareBanners', JSON.stringify(banners));
+          mediaData.squareBanners = banners;
+          renderBanners();
+        });
+
+        saveMedia('prologueVideoInput', 'video_prologue', (data) => {
+          mediaData.prologue = data;
+        });
+
+        saveMedia('epilogueVideoInput', 'video_epilogue', (data) => {
+          mediaData.epilogue = data;
+        });
+
+        showToast("Медиа-файлы сохранены!", "success");
+      });
+
+      showPage('main-page');
+    });
+  </script>
+</body>
+
+</html>

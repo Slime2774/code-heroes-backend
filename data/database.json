@@ -1,0 +1,298 @@
+{
+  "teams": [
+    {
+      "id": 101,
+      "teamName": "Меловой период, Лицей 17",
+      "school": "Лицей 17",
+      "class": "10-11",
+      "captainName": "Максимов Макс",
+      "email": "fffff@gmail.com",
+      "points": 110,
+      "solvedTasks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "registeredAt": "2026-06-18T17:00:00.000Z"
+    },
+    {
+      "id": 102,
+      "teamName": "Мелководье",
+      "school": "Лицей 17",
+      "class": "9",
+      "captainName": "Максимов Макс",
+      "email": "fffff@gmail.com",
+      "points": 120,
+      "solvedTasks": [
+        1,
+        2,
+        3,
+        4,
+        9
+      ],
+      "registeredAt": "2026-06-18T17:00:00.000Z"
+    },
+    {
+      "id": 103,
+      "teamName": "Апельсин",
+      "school": "Гимназия 25",
+      "class": "11",
+      "captainName": "Смирнов Игнат",
+      "email": "asdasdas@gmail.com",
+      "points": 100,
+      "solvedTasks": [
+        1,
+        2,
+        3
+      ],
+      "registeredAt": "2026-06-18T17:00:00.000Z"
+    },
+    {
+      "id": 104,
+      "teamName": "aaf",
+      "school": "10",
+      "class": "10",
+      "captainName": "asdda",
+      "email": "asdasd@gmail.com",
+      "points": 0,
+      "solvedTasks": [],
+      "registeredAt": "2026-06-18T17:00:00.000Z"
+    },
+    {
+      "id": 105,
+      "teamName": "bvnn",
+      "school": "24",
+      "class": "10",
+      "captainName": "bvb vbbbv bn",
+      "email": "andreidwjhjmj@",
+      "points": 30,
+      "solvedTasks": [],
+      "registeredAt": "2026-06-18T17:00:00.000Z"
+    },
+    {
+      "id": 106,
+      "teamName": "ываыва",
+      "school": "10",
+      "class": "8",
+      "captainName": "ываыва",
+      "email": "",
+      "points": 0,
+      "solvedTasks": [],
+      "registeredAt": "2026-06-18T17:00:00.000Z"
+    },
+    {
+      "id": 107,
+      "teamName": "Тест1",
+      "school": "Тест1",
+      "class": "8",
+      "captainName": "Тест1",
+      "email": "",
+      "points": 0,
+      "solvedTasks": [],
+      "registeredAt": "2026-06-18T17:00:00.000Z"
+    },
+    {
+      "id": 108,
+      "teamName": "фывфыв",
+      "school": "фывфыв",
+      "class": "9",
+      "captainName": "фывфыв",
+      "email": "",
+      "points": 0,
+      "solvedTasks": [],
+      "registeredAt": "2026-06-18T17:00:00.000Z"
+    },
+    {
+      "id": 109,
+      "teamName": "Альфа",
+      "school": "фыв",
+      "class": "9",
+      "captainName": "фывфыв",
+      "email": "",
+      "points": 0,
+      "solvedTasks": [],
+      "registeredAt": "2026-06-18T17:00:00.000Z"
+    },
+    {
+      "id": 110,
+      "teamName": "ячсячс",
+      "school": "ячсяс",
+      "class": "9",
+      "captainName": "ячсяс",
+      "email": "",
+      "points": 0,
+      "solvedTasks": [],
+      "registeredAt": "2026-06-18T17:00:00.000Z"
+    }
+  ],
+  "tasks": [
+    {
+      "id": 1,
+      "name": "Задача 1. Перебор",
+      "tour": 1,
+      "points": 10,
+      "story": "Вам предстоит взломать систему генерации кода доступа.",
+      "description": "Система генерирования N=2^10×3^6×5^4. Найдите количество делителей.",
+      "correctAnswer": "1155",
+      "createdAt": "2026-06-18T17:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "name": "Задача 2. Отклик",
+      "tour": 1,
+      "points": 10,
+      "story": "Роботы передают сигналы по цепочке, каждый следующий в 3 раза больше.",
+      "description": "Чтобы запустить A1=2, An+1=3An. Найдите A15.",
+      "correctAnswer": "17931593",
+      "createdAt": "2026-06-18T17:00:00.000Z"
+    },
+    {
+      "id": 3,
+      "name": "Задача 3. Марш",
+      "tour": 1,
+      "points": 10,
+      "story": "Отряд роботов движется по матрице, нужно найти путь.",
+      "description": "Пространство p. Слой 1 (построение):\n1 3 8 9\n2 2 7 8\n6 6 9 9\n9 9 9 9",
+      "correctAnswer": "15",
+      "createdAt": "2026-06-18T17:00:00.000Z"
+    },
+    {
+      "id": 4,
+      "name": "Задача 4. Переход",
+      "tour": 1,
+      "points": 10,
+      "story": "Роботы должны пройти через порталы, каждый раз увеличиваясь в 2 раза.",
+      "description": "Слой 2 (построение). Найдите количество способов перехода.",
+      "correctAnswer": "64",
+      "createdAt": "2026-06-18T17:00:00.000Z"
+    },
+    {
+      "id": 5,
+      "name": "Задача 1. Разряд",
+      "tour": 2,
+      "points": 20,
+      "story": "Армия роботов готовится к атаке, нужно определить разрядность.",
+      "description": "Дано текущее II. Все цифры в армии роботов.",
+      "correctAnswer": "",
+      "createdAt": "2026-06-18T17:00:00.000Z"
+    },
+    {
+      "id": 6,
+      "name": "Задача 2. Захват",
+      "tour": 2,
+      "points": 20,
+      "story": "Роботы захватывают территорию, нужно найти пары.",
+      "description": "Дано целое число. Таких пар (A, B) пока армия терь...",
+      "correctAnswer": "",
+      "createdAt": "2026-06-18T17:00:00.000Z"
+    },
+    {
+      "id": 7,
+      "name": "Задача 3. Первая",
+      "tour": 2,
+      "points": 20,
+      "story": "Найдите первую цифру в коде доступа.",
+      "description": "Найдите количество. Примечания: O, несмотря на по...",
+      "correctAnswer": "",
+      "createdAt": "2026-06-18T17:00:00.000Z"
+    },
+    {
+      "id": 8,
+      "name": "Задача 4. Возвращение",
+      "tour": 2,
+      "points": 20,
+      "story": "Робот-укладчик возвращается на базу.",
+      "description": "Робот-укладчик 502956",
+      "correctAnswer": "",
+      "createdAt": "2026-06-18T17:00:00.000Z"
+    },
+    {
+      "id": 9,
+      "name": "Тестовая задача",
+      "story": "Тестовая задача",
+      "description": "2+2",
+      "points": 10,
+      "tour": 1,
+      "correctAnswer": "4",
+      "createdAt": "2026-06-19T20:52:47.870Z"
+    },
+    {
+      "id": 10,
+      "name": "Тест",
+      "story": "тест",
+      "description": "2+3",
+      "points": 10,
+      "tour": 1,
+      "correctAnswer": "5",
+      "createdAt": "2026-06-19T20:58:15.805Z"
+    }
+  ],
+  "submissions": [
+    {
+      "id": 1,
+      "teamId": 110,
+      "taskId": 1,
+      "answer": "DASASDASD",
+      "isCorrect": false,
+      "timestamp": "2026-06-18T17:11:00.000Z"
+    },
+    {
+      "id": 2,
+      "teamId": 109,
+      "taskId": 1,
+      "answer": "1155",
+      "isCorrect": true,
+      "timestamp": "2026-06-18T17:13:00.000Z"
+    },
+    {
+      "id": 3,
+      "teamId": 109,
+      "taskId": 2,
+      "answer": "17931593",
+      "isCorrect": true,
+      "timestamp": "2026-06-18T17:14:00.000Z"
+    },
+    {
+      "id": 4,
+      "teamId": 109,
+      "taskId": 3,
+      "answer": "15",
+      "isCorrect": true,
+      "timestamp": "2026-06-18T17:15:00.000Z"
+    },
+    {
+      "id": 5,
+      "teamId": 109,
+      "taskId": 4,
+      "answer": "64",
+      "isCorrect": true,
+      "timestamp": "2026-06-18T17:16:00.000Z"
+    },
+    {
+      "id": 1781902593131,
+      "teamId": 102,
+      "taskId": 9,
+      "answer": "4",
+      "isCorrect": true,
+      "timestamp": "2026-06-19T20:56:33.131Z"
+    }
+  ],
+  "media": {
+    "mainBanner": "",
+    "squareBanner1": "",
+    "squareBanner2": "",
+    "prologueVideo": "",
+    "epilogueVideo": ""
+  },
+  "admins": [
+    {
+      "login": "ivan_org",
+      "password": "securePass99"
+    },
+    {
+      "login": "admin",
+      "password": "admin123"
+    }
+  ]
+}
