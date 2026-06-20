@@ -2084,7 +2084,7 @@
       });
 
       // ============================================================
-      // ОТПРАВКА РЕШЕНИЯ
+      // ОТПРАВКА РЕШЕНИЯ - ВСЕГДА "ОТВЕТ ЗАСЧИТАН"
       // ============================================================
       document.getElementById('sendTaskBtn')?.addEventListener('click', () => {
         const teamId = localStorage.getItem("currentTeamId");
@@ -2105,7 +2105,14 @@
         }
 
         const currentTask = serverTasks[currentTaskIndex];
-        consoleEl.textContent = "Отправка решения...";
+
+        // Проверяем, не решена ли уже задача
+        if (currentTask.isSolved) {
+          showToast("✅ Это задание уже выполнено!", "info");
+          return;
+        }
+
+        consoleEl.textContent = "⏳ Отправка...";
 
         const payload = {
           teamId: teamId,
@@ -2120,29 +2127,53 @@
         })
           .then(res => res.json())
           .then(data => {
-            if (data.isCorrect) {
-              consoleEl.innerHTML = `<span style='color:#00ffcc; font-weight:bold;'>✅ ${data.message}</span>`;
-              showToast(`✅ Правильно! +${data.pointsEarned} баллов`, "success");
+            console.log('📥 Ответ сервера:', data);
+
+            if (data.status === 'already_solved') {
+              consoleEl.innerHTML = `<span style='color:#ffcc00;'>⚠️ ${data.message}</span>`;
+              showToast("⚠️ Это задание уже выполнено!", "info");
               currentTask.isSolved = true;
               editor.disabled = true;
+              document.getElementById('sendTaskBtn').disabled = true;
+              return;
+            }
+
+            // ============================================================
+            // ВСЕГДА "ОТВЕТ ЗАСЧИТАН" - БЕЗ ПОДСКАЗОК
+            // ============================================================
+            consoleEl.innerHTML = `<span style='color:#00ffcc; font-weight:bold;'>✅ Ответ засчитан</span>`;
+            showToast(`✅ Ответ засчитан`, "success");
+
+            // Очищаем поле ввода
+            editor.value = "";
+
+            // Если ответ правильный - переходим к следующей задаче
+            if (data.isCorrect) {
+              currentTask.isSolved = true;
+              editor.disabled = true;
+              document.getElementById('sendTaskBtn').disabled = true;
 
               if (currentTaskIndex >= serverTasks.length - 1) {
-                setTimeout(() => showPage('epilogue-page'), 1500);
+                clearInterval(window.tourTimerInterval);
+                setTimeout(() => {
+                  showToast("🎉 Все задания выполнены!", "success");
+                  showPage('epilogue-page');
+                }, 1500);
               } else {
                 setTimeout(() => {
                   currentTaskIndex++;
                   renderCurrentTask();
+                  document.getElementById('sendTaskBtn').disabled = false;
                 }, 1500);
               }
-            } else {
-              consoleEl.innerHTML = `<span style='color:#ff6b6b;'>❌ ${data.message}</span>`;
-              showToast("❌ Неправильно, попробуй еще раз!", "error");
             }
+            // Если неправильно - НИЧЕГО НЕ ГОВОРИМ, просто ответ засчитан
+            // Участник может отправить снова
           })
           .catch(err => {
-            console.error(err);
-            consoleEl.textContent = "Ошибка сети при отправке решения.";
-            showToast("Ошибка отправки. Попробуйте ещё раз.", "error");
+            console.error('❌ Ошибка:', err);
+            consoleEl.innerHTML = `<span style='color:#ff6b6b;'>❌ Ошибка сети при отправке.</span>`;
+            showToast("❌ Ошибка отправки. Попробуйте ещё раз.", "error");
           });
       });
 
@@ -2169,7 +2200,7 @@
       document.getElementById('showTasksAdminBtn')?.addEventListener('click', () => {
         document.getElementById('adminTasksSection').style.display = 'block';
         document.getElementById('bannersUploadSection').style.display = 'none';
-        document.getElementById('adminTeamsSection').style.display = 'none'; 
+        document.getElementById('adminTeamsSection').style.display = 'none';
       });
 
       document.getElementById('showBannersAdminBtn')?.addEventListener('click', () => {

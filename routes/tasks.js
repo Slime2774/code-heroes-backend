@@ -45,7 +45,7 @@ router.get('/:taskId', (req, res) => {
 });
 
 // ============================================================
-// ОТПРАВКА РЕШЕНИЯ - ИСПРАВЛЕННАЯ ВЕРСИЯ
+// ОТПРАВКА РЕШЕНИЯ - ПРОВЕРКА ЕСТЬ, НО УЧАСТНИК НЕ ВИДИТ
 // ============================================================
 router.post('/submit', (req, res) => {
     try {
@@ -80,34 +80,27 @@ router.post('/submit', (req, res) => {
         if (team.solvedTasks.includes(task.id)) {
             return res.json({
                 status: 'already_solved',
-                message: 'Задача уже решена ✅'
+                message: 'Задание уже выполнено ✅'
             });
         }
 
         // ============================================================
-        // ГЛАВНОЕ: ПРОВЕРКА ОТВЕТА
+        // ПРОВЕРКА ОТВЕТА (ЕСТЬ, НО УЧАСТНИК НЕ ВИДИТ РЕЗУЛЬТАТ)
         // ============================================================
         let isCorrect = false;
-        let answerMessage = '';
 
-        // Проверяем, есть ли правильный ответ у задачи
         if (task.correctAnswer && task.correctAnswer.trim() !== '') {
-            // Сравниваем ответ (игнорируем регистр и пробелы)
             const userAnswer = answer.trim().toLowerCase();
             const correctAnswer = task.correctAnswer.trim().toLowerCase();
             isCorrect = userAnswer === correctAnswer;
-
-            answerMessage = isCorrect ? '✅ Правильный ответ!' : '❌ Неправильный ответ. Попробуйте еще раз!';
         } else {
-            // Если правильного ответа нет - задача считается НЕПРОВЕРЯЕМОЙ
-            // ❌ ОТВЕТ НЕ ЗАСЧИТЫВАЕТСЯ!
+            // Если правильного ответа нет - ОТВЕТ НЕ ЗАСЧИТЫВАЕТСЯ
             isCorrect = false;
-            answerMessage = '⚠️ Для этой задачи не задан правильный ответ. Обратитесь к организатору!';
         }
 
-        console.log(`🔍 Проверка ответа: "${answer.trim()}" vs "${task.correctAnswer || 'НЕТ ОТВЕТА'}" = ${isCorrect}`);
+        console.log(`🔍 Проверка: "${answer.trim()}" vs "${task.correctAnswer}" = ${isCorrect}`);
 
-        // Сохраняем попытку в историю (всегда, даже если неправильно)
+        // Сохраняем попытку в историю
         db.submissions.push({
             id: Date.now(),
             teamId: team.id,
@@ -117,30 +110,34 @@ router.post('/submit', (req, res) => {
             timestamp: new Date().toISOString()
         });
 
+        // ✅ БАЛЛЫ НАЧИСЛЯЕМ ТОЛЬКО ЕСЛИ ПРАВИЛЬНО
         if (isCorrect) {
-            // ✅ ПРАВИЛЬНО - начисляем баллы
             team.points += task.points || 10;
             team.solvedTasks.push(task.id);
-
             saveDB(db);
 
-            res.json({
-                status: 'success',
-                isCorrect: true,
-                pointsEarned: task.points || 10,
-                totalPoints: team.points,
-                message: '✅ Задание выполнено!'
-            });
+            console.log(`✅ Команда ${team.teamName} получила ${task.points} баллов за задачу ${task.id}`);
         } else {
-            // ❌ НЕПРАВИЛЬНО - баллы НЕ начисляем
+            // ❌ НЕПРАВИЛЬНО - БАЛЛЫ НЕ НАЧИСЛЯЕМ
+            // НО ЗАДАЧА НЕ ПОМЕЧАЕТСЯ КАК РЕШЕННАЯ!
+            // (участник может попробовать снова)
             saveDB(db);
 
-            res.json({
-                status: 'success',
-                isCorrect: false,
-                message: answerMessage || '❌ Неправильный ответ. Попробуйте еще раз!'
-            });
+            console.log(`❌ Команда ${team.teamName} дала НЕПРАВИЛЬНЫЙ ответ на задачу ${task.id}`);
         }
+
+        // ============================================================
+        // УЧАСТНИК ВСЕГДА ВИДИТ ОДНО И ТО ЖЕ СООБЩЕНИЕ
+        // ============================================================
+        res.json({
+            status: 'success',
+            isCorrect: isCorrect,        // ← фронтенд может использовать, но мы скрываем
+            pointsEarned: isCorrect ? (task.points || 10) : 0,
+            totalPoints: team.points,
+            message: '✅ Задание выполнено!',
+            // НЕ ПИШЕМ "правильно" или "неправильно"!
+        });
+
     } catch (err) {
         console.error('❌ Ошибка отправки решения:', err);
         res.status(500).json({
@@ -151,6 +148,3 @@ router.post('/submit', (req, res) => {
 });
 
 module.exports = router;
-
-
-
