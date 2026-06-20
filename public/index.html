@@ -1861,61 +1861,97 @@
     }
 
     function deleteTeam(teamId) {
-      if (!confirm(`Удалить команду ${teamId}? Это действие нельзя отменить!`)) return;
+      // Открываем кастомное модальное окно
+      const bodyContent = `
+        <p style="font-size:18px; margin-bottom:10px;">🗑 Удалить команду <strong style="color:#ff6b6b;">${teamId}</strong>?</p>
+        <p style="color:#aaa; font-size:14px;">Это действие нельзя отменить! Все данные команды будут удалены.</p>
+    `;
 
-      const login = window.adminLogin || 'ivan_org';
-      const password = window.adminPassword || 'securePass99';
+      const buttonsHtml = `
+        <button class="modal-btn-cancel" id="deleteTeamCancel">Отмена</button>
+        <button class="modal-btn-confirm" id="deleteTeamConfirm" style="background:linear-gradient(135deg, #b92222, #731313);">🗑 Удалить</button>
+    `;
 
-      fetch(`${BACKEND_URL}/admin/team/${teamId}`, {
-        method: 'DELETE',
-        headers: {
-          'x-admin-login': login,
-          'x-admin-password': password,
-          'Content-Type': 'application/json'
-        }
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data.status === 'success') {
-            showToast('✅ Команда удалена!', 'success');
-            loadTeamsToAdminTable();
-          } else {
-            showToast('❌ Ошибка удаления: ' + data.message, 'error');
+      openCustomModal("⚠️ Подтверждение удаления", bodyContent, buttonsHtml);
+
+      document.getElementById('deleteTeamCancel')?.addEventListener('click', closeCustomModal);
+
+      document.getElementById('deleteTeamConfirm')?.addEventListener('click', () => {
+        closeCustomModal();
+
+        // Показываем тост о загрузке
+        showToast("⏳ Удаление команды...", "info");
+
+        const login = window.adminLogin || 'ivan_org';
+        const password = window.adminPassword || 'securePass99';
+
+        fetch(`${BACKEND_URL}/admin/team/${teamId}`, {
+          method: 'DELETE',
+          headers: {
+            'x-admin-login': login,
+            'x-admin-password': password,
+            'Content-Type': 'application/json'
           }
         })
-        .catch(err => {
-          showToast('❌ Ошибка: ' + err.message, 'error');
-        });
+          .then(res => res.json())
+          .then(data => {
+            if (data.status === 'success') {
+              showToast(`✅ ${data.message}`, 'success');
+              loadTeamsToAdminTable();
+            } else {
+              showToast('❌ Ошибка: ' + data.message, 'error');
+            }
+          })
+          .catch(err => {
+            showToast('❌ Ошибка: ' + err.message, 'error');
+          });
+      });
     }
 
 
 
     function deleteTask(taskId) {
-      if (!confirm(`Удалить задачу ${taskId}?`)) return;
+      const bodyContent = `
+        <p style="font-size:18px; margin-bottom:10px;">🗑 Удалить задачу <strong style="color:#ff6b6b;">${taskId}</strong>?</p>
+        <p style="color:#aaa; font-size:14px;">Это действие нельзя отменить!</p>
+    `;
 
-      const login = window.adminLogin || 'ivan_org';
-      const password = window.adminPassword || 'securePass99';
+      const buttonsHtml = `
+        <button class="modal-btn-cancel" id="deleteTaskCancel">Отмена</button>
+        <button class="modal-btn-confirm" id="deleteTaskConfirm" style="background:linear-gradient(135deg, #b92222, #731313);">🗑 Удалить</button>
+    `;
 
-      fetch(`${BACKEND_URL}/admin/task/${taskId}`, {
-        method: 'DELETE',
-        headers: {
-          'x-admin-login': login,
-          'x-admin-password': password,
-          'Content-Type': 'application/json'
-        }
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data.status === 'success') {
-            showToast('Задача удалена!', 'success');
-            loadTasksToAdminTable();
-          } else {
-            showToast('Ошибка удаления: ' + data.message, 'error');
+      openCustomModal("⚠️ Подтверждение удаления", bodyContent, buttonsHtml);
+
+      document.getElementById('deleteTaskCancel')?.addEventListener('click', closeCustomModal);
+
+      document.getElementById('deleteTaskConfirm')?.addEventListener('click', () => {
+        closeCustomModal();
+
+        const login = window.adminLogin || 'ivan_org';
+        const password = window.adminPassword || 'securePass99';
+
+        fetch(`${BACKEND_URL}/admin/task/${taskId}`, {
+          method: 'DELETE',
+          headers: {
+            'x-admin-login': login,
+            'x-admin-password': password,
+            'Content-Type': 'application/json'
           }
         })
-        .catch(err => {
-          showToast('Ошибка: ' + err.message, 'error');
-        });
+          .then(res => res.json())
+          .then(data => {
+            if (data.status === 'success') {
+              showToast(`✅ ${data.message}`, 'success');
+              loadTasksToAdminTable();
+            } else {
+              showToast('❌ Ошибка: ' + data.message, 'error');
+            }
+          })
+          .catch(err => {
+            showToast('❌ Ошибка: ' + err.message, 'error');
+          });
+      });
     }
 
     // ============================================================
