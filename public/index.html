@@ -1356,14 +1356,16 @@
     function confirmLogoutTeam(onConfirm) {
       const bodyContent = `<p>Вы действительно хотите выйти из текущей команды?</p>`;
       const buttonsHtml = `
-                <button class="modal-btn-cancel" id="logoutCancel">Остаться</button>
-                <button class="modal-btn-confirm" id="logoutConfirm" style="background:linear-gradient(135deg, #b92222, #731313);">Выйти</button>
-            `;
+        <button class="modal-btn-cancel" id="logoutCancel">Остаться</button>
+        <button class="modal-btn-confirm" id="logoutConfirm" style="background:linear-gradient(135deg, #b92222, #731313);">Выйти</button>
+    `;
       openCustomModal("Выход из профиля команды", bodyContent, buttonsHtml);
 
       document.getElementById('logoutCancel')?.addEventListener('click', closeCustomModal);
       document.getElementById('logoutConfirm')?.addEventListener('click', () => {
         closeCustomModal();
+        // ✅ Очищаем всё при выходе
+        localStorage.removeItem("allTasksCompleted");
         onConfirm();
       });
     }
@@ -1504,6 +1506,7 @@
       if (!header) return;
 
       const savedTeam = localStorage.getItem("currentTeamName") || "";
+      const allTasksCompleted = localStorage.getItem("allTasksCompleted") === "true";
       const teamBadge = savedTeam ?
         `<span style="color:#21B2BF;font-size:14px;font-weight:600;margin-right:15px;">Команда: ${savedTeam}</span>` :
         "";
@@ -1514,29 +1517,33 @@
         let taskButton = "";
 
         if (savedTeam) {
-          taskButton =
-            `<button class="nav-btn" onclick="showPage('tour-page')" style="color:#00ffcc;">Задания тура</button>`;
-          actionButton =
-            `<button class="nav-btn" id="logoutTeamBtn" style="color: #ff3366; font-weight: 600;">Выйти</button>`;
+          // Если задания пройдены - кнопка заблокирована
+          if (allTasksCompleted) {
+            taskButton = `<button class="nav-btn" style="color:#666; cursor:not-allowed; opacity:0.5;" disabled>✅ Задания пройдены</button>`;
+          } else {
+            taskButton = `<button class="nav-btn" onclick="showPage('tour-page')" style="color:#00ffcc;">Задания тура</button>`;
+          }
+          actionButton = `<button class="nav-btn" id="logoutTeamBtn" style="color: #ff3366; font-weight: 600;">Выйти</button>`;
         } else {
           actionButton = `<button class="register-header-btn" onclick="showPage('register-page')">Регистрация / Вход</button>`;
         }
 
         header.innerHTML = `
-                    ${logoHtml}
-                    <div class="nav-links">
-                        ${teamBadge}
-                        ${taskButton}
-                        <button class="nav-btn" onclick="document.getElementById('rules').scrollIntoView({behavior:'smooth'})">Правила</button>
-                        <button class="nav-btn" onclick="showPage('rating-page')">Рейтинг</button>
-                        ${actionButton}
-                    </div>
-                `;
+            ${logoHtml}
+            <div class="nav-links">
+                ${teamBadge}
+                ${taskButton}
+                <button class="nav-btn" onclick="document.getElementById('rules').scrollIntoView({behavior:'smooth'})">Правила</button>
+                <button class="nav-btn" onclick="showPage('rating-page')">Рейтинг</button>
+                ${actionButton}
+            </div>
+        `;
 
         document.getElementById('logoutTeamBtn')?.addEventListener('click', () => {
           confirmLogoutTeam(() => {
             localStorage.removeItem("currentTeamId");
             localStorage.removeItem("currentTeamName");
+            localStorage.removeItem("allTasksCompleted");
             showToast("Вы успешно вышли из команды.", "info");
             showPage('main-page');
           });
@@ -1544,14 +1551,15 @@
 
       } else {
         header.innerHTML = `
-                    ${logoHtml}
-                    <div class="nav-links">
-                        <button class="nav-btn" onclick="showPage('main-page')">Главная</button>
-                        ${savedTeam ? `<button class="nav-btn" onclick="showPage('tour-page')">Задания</button>` : ''}
-                        <button class="nav-btn" onclick="showPage('rating-page')">Рейтинг</button>
-                        ${teamBadge}
-                    </div>
-                `;
+            ${logoHtml}
+            <div class="nav-links">
+                <button class="nav-btn" onclick="showPage('main-page')">Главная</button>
+                ${savedTeam && !allTasksCompleted ? `<button class="nav-btn" onclick="showPage('tour-page')">Задания</button>` : ''}
+                ${savedTeam && allTasksCompleted ? `<button class="nav-btn" style="color:#666; cursor:not-allowed; opacity:0.5;" disabled>✅ Задания пройдены</button>` : ''}
+                <button class="nav-btn" onclick="showPage('rating-page')">Рейтинг</button>
+                ${teamBadge}
+            </div>
+        `;
       }
     }
 
@@ -2057,6 +2065,7 @@
           .then(data => {
             if (data.status === "success") {
               localStorage.removeItem("tourDeadline");
+              localStorage.removeItem("allTasksCompleted"); // ✅ ДОБАВЬ ЭТУ СТРОКУ!
               if (window.tourTimerInterval) clearInterval(window.tourTimerInterval);
 
               localStorage.setItem("currentTeamId", data.teamId);
@@ -2084,7 +2093,7 @@
       });
 
       // ============================================================
-      // ОТПРАВКА РЕШЕНИЯ - ВСЕГДА "ОТВЕТ ЗАСЧИТАН"
+      // ОТПРАВКА РЕШЕНИЯ - ВСЕГДА ПЕРЕХОД НА СЛЕДУЮЩЕЕ ЗАДАНИЕ
       // ============================================================
       document.getElementById('sendTaskBtn')?.addEventListener('click', () => {
         const teamId = localStorage.getItem("currentTeamId");
@@ -2138,37 +2147,43 @@
               return;
             }
 
-            // ============================================================
-            // ВСЕГДА "ОТВЕТ ЗАСЧИТАН" - БЕЗ ПОДСКАЗОК
-            // ============================================================
+            // ✅ ОТВЕТ ЗАСЧИТАН
             consoleEl.innerHTML = `<span style='color:#00ffcc; font-weight:bold;'>✅ Ответ засчитан</span>`;
             showToast(`✅ Ответ засчитан`, "success");
 
-            // Очищаем поле ввода
+            // Очищаем поле
             editor.value = "";
 
-            // Если ответ правильный - переходим к следующей задаче
-            if (data.isCorrect) {
-              currentTask.isSolved = true;
+            // Помечаем задачу как выполненную (ВСЕГДА, даже если неправильно)
+            currentTask.isSolved = true;
+
+            // ============================================================
+            // ПРОВЕРЯЕМ, ПОСЛЕДНЕЕ ЛИ ЭТО ЗАДАНИЕ
+            // ============================================================
+            if (currentTaskIndex >= serverTasks.length - 1) {
+              // 🔥 ВСЕ ЗАДАНИЯ ВЫПОЛНЕНЫ!
+              clearInterval(window.tourTimerInterval);
               editor.disabled = true;
               document.getElementById('sendTaskBtn').disabled = true;
 
-              if (currentTaskIndex >= serverTasks.length - 1) {
-                clearInterval(window.tourTimerInterval);
-                setTimeout(() => {
-                  showToast("🎉 Все задания выполнены!", "success");
-                  showPage('epilogue-page');
-                }, 1500);
-              } else {
-                setTimeout(() => {
-                  currentTaskIndex++;
-                  renderCurrentTask();
-                  document.getElementById('sendTaskBtn').disabled = false;
-                }, 1500);
-              }
+              // Показываем плашку
+              showToast("🎉 Вы прошли все туры!", "success");
+
+              // Блокируем кнопку "Задания тура" в шапке
+              localStorage.setItem("allTasksCompleted", "true");
+
+              // Переход на эпилог через 2 секунды
+              setTimeout(() => {
+                showPage('epilogue-page');
+              }, 2000);
+            } else {
+              // 🔥 ПЕРЕХОДИМ НА СЛЕДУЮЩЕЕ ЗАДАНИЕ
+              setTimeout(() => {
+                currentTaskIndex++;
+                renderCurrentTask();
+                document.getElementById('sendTaskBtn').disabled = false;
+              }, 1000);
             }
-            // Если неправильно - НИЧЕГО НЕ ГОВОРИМ, просто ответ засчитан
-            // Участник может отправить снова
           })
           .catch(err => {
             console.error('❌ Ошибка:', err);
