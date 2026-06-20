@@ -1161,6 +1161,8 @@
             style="background: linear-gradient(135deg,#B92278,#8f1a5f);">Редактор заданий</button>
           <button class="register-header-btn" id="showBannersAdminBtn"
             style="background: linear-gradient(135deg,#21B2BF,#1a8f99);">Загрузка баннеров</button>
+          <button class="register-header-btn" id="showTeamsAdminBtn"
+            style="background: linear-gradient(135deg,#FF6B35,#C0392B);">Управление командами</button>
         </div>
         <div id="adminTasksSection">
           <div class="admin-edit-section"
@@ -1227,6 +1229,28 @@
             <tbody id="adminTasksBody">
               <tr>
                 <td colspan="5" style="text-align:center;">Загрузка списка заданий...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="adminTeamsSection" style="display: none;">
+          <h3 style="color: #FF6B35; margin-top: 0; margin-bottom: 20px;">Управление командами</h3>
+          <table class="tasks-admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Школа</th>
+                <th>Класс</th>
+                <th>Капитан</th>
+                <th>Баллы</th>
+                <th>Действия</th>
+              </tr>
+            </thead>
+            <tbody id="adminTeamsBody">
+              <tr>
+                <td colspan="7" style="text-align:center;">Загрузка команд...</td>
               </tr>
             </tbody>
           </table>
@@ -1750,6 +1774,114 @@
         });
     }
 
+
+    // ============================================================
+    // УПРАВЛЕНИЕ КОМАНДАМИ (АДМИНКА)
+    // ============================================================
+
+    function loadTeamsToAdminTable() {
+      const adminTeamsBody = document.getElementById('adminTeamsBody');
+      if (!adminTeamsBody) return;
+
+      adminTeamsBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">⏳ Загрузка команд...</td></tr>';
+
+      const login = window.adminLogin || 'ivan_org';
+      const password = window.adminPassword || 'securePass99';
+
+      fetch(`${BACKEND_URL}/admin/teams`, {
+        method: 'GET',
+        headers: {
+          'x-admin-login': login,
+          'x-admin-password': password,
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(res => {
+          if (res.status === 401) {
+            throw new Error('Неверный логин или пароль!');
+          }
+          if (!res.ok) {
+            throw new Error('Ошибка сервера: ' + res.status);
+          }
+          return res.json();
+        })
+        .then(teams => {
+          adminTeamsBody.innerHTML = "";
+
+          if (!teams || teams.length === 0) {
+            adminTeamsBody.innerHTML = `
+                <tr>
+                    <td colspan="7" style="text-align:center; padding: 30px; color: #666;">
+                        📭 Зарегистрированных команд пока нет.
+                    </td>
+                </tr>
+            `;
+            return;
+          }
+
+          teams.forEach(team => {
+            const row = `
+                <tr>
+                    <td><strong>${team.id || '—'}</strong></td>
+                    <td><strong>${team.teamName || 'Без названия'}</strong></td>
+                    <td>${team.school || '—'}</td>
+                    <td>${team.class || '—'}</td>
+                    <td>${team.captainName || '—'}</td>
+                    <td><span style="color: #21B2BF; font-weight: bold;">${team.points || 0}</span></td>
+                    <td style="text-align:center;">
+                        <button class="exit-btn" 
+                                style="padding: 4px 12px; font-size:12px; background: #b92222; color: white; border: none; border-radius: 4px; cursor: pointer;" 
+                                onclick="deleteTeam('${team.id}')">
+                            🗑 Удалить
+                        </button>
+                    </td>
+                </tr>
+            `;
+            adminTeamsBody.insertAdjacentHTML('beforeend', row);
+          });
+        })
+        .catch(err => {
+          console.error('❌ Ошибка загрузки команд:', err);
+          adminTeamsBody.innerHTML = `
+            <tr>
+                <td colspan="7" style="text-align:center; color:#ff3366; padding: 20px;">
+                    ❌ ${err.message}
+                </td>
+            </tr>
+        `;
+        });
+    }
+
+    function deleteTeam(teamId) {
+      if (!confirm(`Удалить команду ${teamId}? Это действие нельзя отменить!`)) return;
+
+      const login = window.adminLogin || 'ivan_org';
+      const password = window.adminPassword || 'securePass99';
+
+      fetch(`${BACKEND_URL}/admin/team/${teamId}`, {
+        method: 'DELETE',
+        headers: {
+          'x-admin-login': login,
+          'x-admin-password': password,
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 'success') {
+            showToast('✅ Команда удалена!', 'success');
+            loadTeamsToAdminTable();
+          } else {
+            showToast('❌ Ошибка удаления: ' + data.message, 'error');
+          }
+        })
+        .catch(err => {
+          showToast('❌ Ошибка: ' + err.message, 'error');
+        });
+    }
+
+
+
     function deleteTask(taskId) {
       if (!confirm(`Удалить задачу ${taskId}?`)) return;
 
@@ -2037,11 +2169,21 @@
       document.getElementById('showTasksAdminBtn')?.addEventListener('click', () => {
         document.getElementById('adminTasksSection').style.display = 'block';
         document.getElementById('bannersUploadSection').style.display = 'none';
+        document.getElementById('adminTeamsSection').style.display = 'none'; 
       });
 
       document.getElementById('showBannersAdminBtn')?.addEventListener('click', () => {
         document.getElementById('adminTasksSection').style.display = 'none';
         document.getElementById('bannersUploadSection').style.display = 'block';
+        document.getElementById('adminTeamsSection').style.display = 'none';
+      });
+
+      // Админ-панель: вкладка команд
+      document.getElementById('showTeamsAdminBtn')?.addEventListener('click', () => {
+        document.getElementById('adminTasksSection').style.display = 'none';
+        document.getElementById('bannersUploadSection').style.display = 'none';
+        document.getElementById('adminTeamsSection').style.display = 'block';
+        loadTeamsToAdminTable();
       });
 
       // ============================================================
@@ -2133,33 +2275,33 @@
       // СОХРАНЕНИЕ МЕДИА
       // ============================================================
       document.getElementById('saveBannersBtn')?.addEventListener('click', function () {
-    const login = window.adminLogin || 'ivan_org';
-    const password = window.adminPassword || 'securePass99';
+        const login = window.adminLogin || 'ivan_org';
+        const password = window.adminPassword || 'securePass99';
 
-    // ============================================================
-    // 1. СОХРАНЕНИЕ БАННЕРОВ (в localStorage)
-    // ============================================================
-    
-    // Главный баннер
-    const mainBannerInput = document.getElementById('mainBannerInput');
-    if (mainBannerInput && mainBannerInput.files.length > 0) {
-        const file = mainBannerInput.files[0];
-        const reader = new FileReader();
-        reader.onload = function(e) {
+        // ============================================================
+        // 1. СОХРАНЕНИЕ БАННЕРОВ (в localStorage)
+        // ============================================================
+
+        // Главный баннер
+        const mainBannerInput = document.getElementById('mainBannerInput');
+        if (mainBannerInput && mainBannerInput.files.length > 0) {
+          const file = mainBannerInput.files[0];
+          const reader = new FileReader();
+          reader.onload = function (e) {
             mediaData.mainBanner = e.target.result;
             localStorage.setItem('mainBanner', e.target.result);
             renderBanners();
             showToast("✅ Главный баннер сохранен!", "success");
-        };
-        reader.readAsDataURL(file);
-    }
+          };
+          reader.readAsDataURL(file);
+        }
 
-    // Мини-баннер 1
-    const banner1Input = document.getElementById('squareBanner1Input');
-    if (banner1Input && banner1Input.files.length > 0) {
-        const file = banner1Input.files[0];
-        const reader = new FileReader();
-        reader.onload = function(e) {
+        // Мини-баннер 1
+        const banner1Input = document.getElementById('squareBanner1Input');
+        if (banner1Input && banner1Input.files.length > 0) {
+          const file = banner1Input.files[0];
+          const reader = new FileReader();
+          reader.onload = function (e) {
             const bannerData = e.target.result;
             let banners = JSON.parse(localStorage.getItem('squareBanners') || '[]');
             banners[0] = bannerData;
@@ -2167,16 +2309,16 @@
             mediaData.squareBanners = banners;
             renderBanners();
             showToast("✅ Мини-баннер 1 сохранен!", "success");
-        };
-        reader.readAsDataURL(file);
-    }
+          };
+          reader.readAsDataURL(file);
+        }
 
-    // Мини-баннер 2
-    const banner2Input = document.getElementById('squareBanner2Input');
-    if (banner2Input && banner2Input.files.length > 0) {
-        const file = banner2Input.files[0];
-        const reader = new FileReader();
-        reader.onload = function(e) {
+        // Мини-баннер 2
+        const banner2Input = document.getElementById('squareBanner2Input');
+        if (banner2Input && banner2Input.files.length > 0) {
+          const file = banner2Input.files[0];
+          const reader = new FileReader();
+          reader.onload = function (e) {
             const bannerData = e.target.result;
             let banners = JSON.parse(localStorage.getItem('squareBanners') || '[]');
             banners[1] = bannerData;
@@ -2184,94 +2326,94 @@
             mediaData.squareBanners = banners;
             renderBanners();
             showToast("✅ Мини-баннер 2 сохранен!", "success");
-        };
-        reader.readAsDataURL(file);
-    }
+          };
+          reader.readAsDataURL(file);
+        }
 
-    // ============================================================
-    // 2. СОХРАНЕНИЕ ВИДЕО (через сервер)
-    // ============================================================
-    
-    // Видео ПРОЛОГА
-    const prologueInput = document.getElementById('prologueVideoInput');
-    if (prologueInput && prologueInput.files.length > 0) {
-        const file = prologueInput.files[0];
-        const reader = new FileReader();
-        reader.onload = function(e) {
+        // ============================================================
+        // 2. СОХРАНЕНИЕ ВИДЕО (через сервер)
+        // ============================================================
+
+        // Видео ПРОЛОГА
+        const prologueInput = document.getElementById('prologueVideoInput');
+        if (prologueInput && prologueInput.files.length > 0) {
+          const file = prologueInput.files[0];
+          const reader = new FileReader();
+          reader.onload = function (e) {
             const videoData = e.target.result;
-            
+
             showToast("⏳ Загрузка видео пролога...", "info");
-            
-            fetch(`${BACKEND_URL}/admin/upload-video`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-admin-login': login,
-                    'x-admin-password': password
-                },
-                body: JSON.stringify({
-                    videoType: 'prologue',
-                    videoData: videoData
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    mediaData.prologue = data.url;
-                    localStorage.setItem('video_prologue', data.url);
-                    showToast('✅ Видео пролога сохранено!', 'success');
-                } else {
-                    showToast('❌ Ошибка: ' + data.message, 'error');
-                }
-            })
-            .catch(err => {
-                showToast('❌ Ошибка: ' + err.message, 'error');
-            });
-        };
-        reader.readAsDataURL(file);
-    }
 
-    // Видео ЭПИЛОГА
-    const epilogueInput = document.getElementById('epilogueVideoInput');
-    if (epilogueInput && epilogueInput.files.length > 0) {
-        const file = epilogueInput.files[0];
-        const reader = new FileReader();
-        reader.onload = function(e) {
+            fetch(`${BACKEND_URL}/admin/upload-video`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'x-admin-login': login,
+                'x-admin-password': password
+              },
+              body: JSON.stringify({
+                videoType: 'prologue',
+                videoData: videoData
+              })
+            })
+              .then(res => res.json())
+              .then(data => {
+                if (data.status === 'success') {
+                  mediaData.prologue = data.url;
+                  localStorage.setItem('video_prologue', data.url);
+                  showToast('✅ Видео пролога сохранено!', 'success');
+                } else {
+                  showToast('❌ Ошибка: ' + data.message, 'error');
+                }
+              })
+              .catch(err => {
+                showToast('❌ Ошибка: ' + err.message, 'error');
+              });
+          };
+          reader.readAsDataURL(file);
+        }
+
+        // Видео ЭПИЛОГА
+        const epilogueInput = document.getElementById('epilogueVideoInput');
+        if (epilogueInput && epilogueInput.files.length > 0) {
+          const file = epilogueInput.files[0];
+          const reader = new FileReader();
+          reader.onload = function (e) {
             const videoData = e.target.result;
-            
-            showToast("⏳ Загрузка видео эпилога...", "info");
-            
-            fetch(`${BACKEND_URL}/admin/upload-video`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-admin-login': login,
-                    'x-admin-password': password
-                },
-                body: JSON.stringify({
-                    videoType: 'epilogue',
-                    videoData: videoData
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    mediaData.epilogue = data.url;
-                    localStorage.setItem('video_epilogue', data.url);
-                    showToast('✅ Видео эпилога сохранено!', 'success');
-                } else {
-                    showToast('❌ Ошибка: ' + data.message, 'error');
-                }
-            })
-            .catch(err => {
-                showToast('❌ Ошибка: ' + err.message, 'error');
-            });
-        };
-        reader.readAsDataURL(file);
-    }
 
-    showToast("📤 Медиа-файлы загружаются...", "info");
-});
+            showToast("⏳ Загрузка видео эпилога...", "info");
+
+            fetch(`${BACKEND_URL}/admin/upload-video`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'x-admin-login': login,
+                'x-admin-password': password
+              },
+              body: JSON.stringify({
+                videoType: 'epilogue',
+                videoData: videoData
+              })
+            })
+              .then(res => res.json())
+              .then(data => {
+                if (data.status === 'success') {
+                  mediaData.epilogue = data.url;
+                  localStorage.setItem('video_epilogue', data.url);
+                  showToast('✅ Видео эпилога сохранено!', 'success');
+                } else {
+                  showToast('❌ Ошибка: ' + data.message, 'error');
+                }
+              })
+              .catch(err => {
+                showToast('❌ Ошибка: ' + err.message, 'error');
+              });
+          };
+          reader.readAsDataURL(file);
+        }
+
+        showToast("📤 Медиа-файлы загружаются...", "info");
+      });
 
       showPage('main-page');
     });
