@@ -209,4 +209,51 @@ router.get('/media', (req, res) => {
     }
 });
 
+// ============================================================
+// УПРАВЛЕНИЕ КОМАНДАМИ (АДМИНКА)
+// ============================================================
+
+// Получить все команды
+router.get('/teams', checkAdmin, (req, res) => {
+    try {
+        const db = loadDB();
+        console.log('📋 Загружено команд:', db.teams?.length || 0);
+        res.json(db.teams || []);
+    } catch (err) {
+        console.error('❌ Ошибка загрузки команд:', err);
+        res.status(500).json({ error: 'Ошибка загрузки команд' });
+    }
+});
+
+// Удалить команду
+router.delete('/team/:teamId', checkAdmin, (req, res) => {
+    try {
+        const teamId = parseInt(req.params.teamId);
+        const db = loadDB();
+
+        const teamIndex = db.teams.findIndex(t => t.id === teamId);
+        if (teamIndex === -1) {
+            return res.status(404).json({
+                status: 'error',
+                message: 'Команда не найдена'
+            });
+        }
+
+        const teamName = db.teams[teamIndex].teamName;
+        db.teams.splice(teamIndex, 1);
+        saveDB(db);
+
+        console.log(`🗑 Команда "${teamName}" (ID: ${teamId}) удалена`);
+
+        res.json({
+            status: 'success',
+            message: `Команда "${teamName}" удалена!`
+        });
+    } catch (err) {
+        console.error('❌ Ошибка удаления команды:', err);
+        res.status(500).json({ error: 'Ошибка удаления команды' });
+    }
+});
+
+
 module.exports = router;
